@@ -2,11 +2,10 @@ package escape;
 
 import flixel.FlxG;
 import flixel.FlxState;
-import flixel.tile.FlxTilemap;
 
 class PlayState extends FlxState {
   var player: Player;
-  var tiles: FlxTilemap;
+  var level: Level;
 
   static inline var TILE_WIDTH = 32;
   static inline var TILE_HEIGHT = 32;
@@ -14,15 +13,8 @@ class PlayState extends FlxState {
   override public function create() {
     FlxG.mouse.visible = false;
 
-    tiles = new FlxTilemap();
-    tiles.loadMapFromCSV(
-      "assets/tiles/level.txt",
-      "assets/tiles/tiles.png",
-      TILE_WIDTH,
-      TILE_HEIGHT,
-      AUTO
-    );
-    add(tiles);
+    level = new Level(AssetPaths.level__txt, AssetPaths.tiles__png);
+    add(level);
 
     player = new Player(30, 30);
     add(player);
@@ -31,7 +23,7 @@ class PlayState extends FlxState {
   }
 
   override function update(elapsed: Float) {
-    FlxG.collide(player, tiles);
+    FlxG.collide(player, level);
 
     super.update(elapsed);
   }
