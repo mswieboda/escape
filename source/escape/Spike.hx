@@ -16,7 +16,10 @@ class Spike extends FlxSprite {
   }
 
   override function update(elapsed: Float) {
+    // keeps it static at the top, kind of like a HUD
+    // instead of `setScroll(0, 0);` since that gets ignored by collisions
     y += Camera.SCROLL_SPEED * elapsed;
+
     super.update(elapsed);
   }
 }

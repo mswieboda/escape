@@ -3,8 +3,10 @@ package escape;
 import flixel.group.FlxGroup;
 import flixel.tile.FlxTilemap;
 import flixel.system.FlxAssets;
+import openfl.Assets;
 
 class Level extends FlxGroup {
+  var doors: FlxGroup;
   var tiles: FlxTilemap;
 
   static inline var TILE_WIDTH = 32;
@@ -13,23 +15,69 @@ class Level extends FlxGroup {
   public function new(levelData: String, tileGraphic: FlxTilemapGraphicAsset) {
     super();
 
-    tiles = new FlxTilemap();
+    doors = new FlxGroup();
 
-    tiles.loadMapFromCSV(
+    loadTiles(levelData, tileGraphic);
+
+    add(tiles);
+    add(doors);
+  }
+
+  override function update(elapsed: Float) {
+    super.update(elapsed);
+  }
+
+  static function parseCSV(csv: String): Array<Array<String>> {
+    var data: Array<Array<String>> = [];
+    var regex: EReg = new EReg("[ \t]*((\r\n)|\r|\n)[ \t]*", "g");
+    var rows: Array<String> = regex.split(csv);
+
+    for(rowString in rows) {
+      data.push(rowString.split(","));
+    }
+
+    return data;
+  }
+
+  function loadTiles(csv: String, tileGraphic: FlxTilemapGraphicAsset) {
+    var levelData: Array<Array<Int>> = [];
+
+    if (Assets.exists(csv)) {
+      csv = Assets.getText(csv);
+    }
+
+    var levelStrData = parseCSV(csv);
+
+    for(row => rowStrData in levelStrData) {
+      var rowData: Array<Int> = [];
+
+      for (col => tile in rowStrData) {
+        var tileData = Std.parseInt(tile);
+
+        if (tileData == null) {
+          switch(tile) {
+            case Door.TILE:
+              doors.add(new Door(col * TILE_WIDTH, row * TILE_HEIGHT));
+            default:
+              trace('>>> [$row, $col]: ??? $tile');
+          }
+
+          tileData = 0;
+        }
+
+        rowData.push(tileData);
+      }
+
+      levelData.push(rowData);
+    }
+
+    tiles = new FlxTilemap();
+    tiles.loadMapFrom2DArray(
       levelData,
       tileGraphic,
       TILE_WIDTH,
       TILE_HEIGHT,
       AUTO
     );
-
-    add(tiles);
-
-    // TODO: find specific tiles like ladders, doors, etc
-    // make objects for them (without sprites etc)
-  }
-
-  override function update(elapsed: Float) {
-    super.update(elapsed);
   }
 }

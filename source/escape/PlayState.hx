@@ -14,6 +14,8 @@ class PlayState extends FlxState {
 
   override public function create() {
     FlxG.mouse.visible = false;
+    FlxG.debugger.visible = true;
+    FlxG.debugger.drawDebug = true;
 
     level = new Level(AssetPaths.level__txt, AssetPaths.tiles__png);
     add(level);
