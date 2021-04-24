@@ -14,6 +14,8 @@ class Player extends FlxSprite {
   static inline var MAX_VELOCITY_X = 160;
   static inline var MAX_VELOCITY_Y = 640;
 
+  public var actionMessage: ActionMessage;
+
   var direction: Int;
 
   public function new(x: Float, y: Float, color: FlxColor = FlxColor.WHITE) {
@@ -26,6 +28,8 @@ class Player extends FlxSprite {
     drag.x = DRAG;
     acceleration.y = GRAVITY;
     maxVelocity.set(MAX_VELOCITY_X, MAX_VELOCITY_Y);
+
+    actionMessage = new ActionMessage();
   }
 
   override public function update(elapsed: Float) {
@@ -64,6 +68,10 @@ class Player extends FlxSprite {
     }
   }
 
+  public function updateBeforeCollisionChecks(elapsed: Float) {
+    actionMessage.hide();
+  }
+
   public function onHitSpikes(obj1: Dynamic, obj2: Dynamic) {
     // TODO: bloody spikes animation
     // set this.killing = true
@@ -77,6 +85,7 @@ class Player extends FlxSprite {
 
   function doorTrigger(trigger: DoorTrigger) {
     // TODO: display message for action key "SPACE to open"
+    actionMessage.show("SPACE/ENTER to open");
 
     var door = trigger.door;
 

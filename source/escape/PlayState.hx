@@ -17,12 +17,12 @@ class PlayState extends FlxState {
     FlxG.debugger.drawDebug = true;
 
     player = new Player(30, 30);
+    gameOverMenu = new GameOverMenu();
 
     level = new Level(player, AssetPaths.level__txt, AssetPaths.tiles__png);
 
     add(level);
-
-    gameOverMenu = new GameOverMenu();
+    add(player.actionMessage);
     add(gameOverMenu);
 
     super.create();

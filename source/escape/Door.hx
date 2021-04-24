@@ -42,4 +42,8 @@ class Door extends FlxGroup {
 
     // TODO: change sprite frame
   }
+
+  public static function onDoorTrigger(player: Player, trigger: DoorTrigger): Bool {
+    return trigger.door.locked;
+  }
 }
