@@ -64,14 +64,10 @@ class Player extends FlxSprite {
     }
   }
 
-  function facingToAnimation() {
-    switch (facing) {
-      case LEFT:
-        return "walk";
-      case RIGHT:
-        return "walk";
-      default:
-        return "none";
-    }
+  public function onHitSpikes(player: Player, spike: Spike) {
+    // TODO: bloody spikes animation
+    // set this.killing = true
+    // when animation done, kill!
+    kill();
   }
 }

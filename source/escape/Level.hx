@@ -1,8 +1,6 @@
 package escape;
 
-import flixel.FlxG;
 import flixel.group.FlxGroup;
-import flixel.FlxState;
 import flixel.tile.FlxTilemap;
 import flixel.system.FlxAssets;
 
@@ -16,6 +14,7 @@ class Level extends FlxGroup {
     super();
 
     tiles = new FlxTilemap();
+
     tiles.loadMapFromCSV(
       levelData,
       tileGraphic,
@@ -23,6 +22,7 @@ class Level extends FlxGroup {
       TILE_HEIGHT,
       AUTO
     );
+
     add(tiles);
 
     // TODO: find specific tiles like ladders, doors, etc
