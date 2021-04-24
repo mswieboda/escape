@@ -1,26 +1,27 @@
 package escape;
 
 import flixel.FlxSprite;
+import flixel.group.FlxGroup;
 import flixel.util.FlxColor;
 
-class Door extends FlxSprite {
+class Door extends FlxGroup {
   public static inline var TILE = 'd';
   public static inline var WIDTH = 32;
   public static inline var HEIGHT = 32;
 
+  public var sprite: FlxSprite;
+  public var trigger: Trigger;
+
   public function new(x: Float, y: Float) {
-    x -= WIDTH / 2;
-    y -= HEIGHT / 2;
+    super();
 
-    super(x, y);
+    sprite = new FlxSprite(x, y);
+    sprite.immovable = true;
+    sprite.makeGraphic(WIDTH, HEIGHT, FlxColor.BROWN);
 
-    makeGraphic(WIDTH, HEIGHT, FlxColor.BROWN);
+    trigger = new Trigger(x -  WIDTH / 2, y - HEIGHT / 2, WIDTH * 2, HEIGHT * 2);
 
-    setSize(WIDTH * 2, HEIGHT * 2);
-    offset.set(-WIDTH / 2, -HEIGHT / 2);
-    // updateHitbox();
-
-    immovable = true;
-    solid = false;
+    add(sprite);
+    add(trigger);
   }
 }
