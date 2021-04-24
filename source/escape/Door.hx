@@ -9,18 +9,37 @@ class Door extends FlxGroup {
   public static inline var WIDTH = 32;
   public static inline var HEIGHT = 32;
 
-  public var sprite: FlxSprite;
   public var trigger: Trigger;
+  public var locked: Bool;
 
-  public function new(x: Float, y: Float) {
+  var sprite: FlxSprite;
+
+  public function new(x: Float, y: Float, locked = true) {
     super();
 
     sprite = new FlxSprite(x, y);
     sprite.immovable = true;
     sprite.makeGraphic(WIDTH, HEIGHT, FlxColor.BROWN);
 
-    trigger = new Trigger(x -  WIDTH / 2, y - HEIGHT / 2, WIDTH * 2, HEIGHT * 2);
+    trigger = new DoorTrigger(x -  WIDTH / 2, y - HEIGHT / 2, WIDTH * 2, HEIGHT * 2, this);
+
+    this.locked = locked;
 
     add(sprite);
+  }
+
+  public function unlock() {
+    trace(">>> Door unlock");
+    locked = false;
+    sprite.solid = false;
+
+    // TODO: change sprite frame
+  }
+
+  public function lock() {
+    locked = true;
+    sprite.solid = true;
+
+    // TODO: change sprite frame
   }
 }

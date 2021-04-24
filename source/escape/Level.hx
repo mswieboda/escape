@@ -47,8 +47,6 @@ class Level extends FlxGroup {
   override function update(elapsed: Float) {
     FlxG.collide(player, colliders);
     FlxG.collide(player, spikes, player.onHitSpikes);
-
-    player.alpha = 1;
     FlxG.overlap(player, doorTriggers, Player.onDoorTrigger);
 
     super.update(elapsed);

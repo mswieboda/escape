@@ -71,7 +71,17 @@ class Player extends FlxSprite {
     kill();
   }
 
-  public static function onDoorTrigger(player: Player, obj2: Trigger) {
-    player.alpha = 0.3;
+  public static function onDoorTrigger(player: Player, trigger: DoorTrigger) {
+    player.doorTrigger(trigger);
+  }
+
+  function doorTrigger(trigger: DoorTrigger) {
+    // TODO: display message for action key "SPACE to open"
+
+    var door = trigger.door;
+
+    if (door.locked && FlxG.keys.anyJustPressed([SPACE, ENTER])) {
+      door.unlock();
+    }
   }
 }
