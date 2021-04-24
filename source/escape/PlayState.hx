@@ -16,7 +16,7 @@ class PlayState extends FlxState {
     FlxG.debugger.visible = true;
     FlxG.debugger.drawDebug = true;
 
-    player = new Player(30, 30);
+    player = new Player(50, 10);
     gameOverMenu = new GameOverMenu();
 
     level = new Level(player, AssetPaths.level__txt, AssetPaths.tiles__png);
@@ -24,6 +24,8 @@ class PlayState extends FlxState {
     add(level);
     add(player.actionMessage);
     add(gameOverMenu);
+
+    Camera.setup();
 
     super.create();
   }

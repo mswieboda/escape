@@ -48,7 +48,7 @@ class Level extends FlxGroup {
     player.updateBeforeCollisionChecks(elapsed);
 
     FlxG.collide(player, colliders);
-    FlxG.collide(player, spikes, player.onHitSpikes);
+    FlxG.collide(player, spikes, Player.onHitSpikes);
     FlxG.overlap(player, doorTriggers, Player.onDoorTrigger, Door.onDoorTrigger);
 
     super.update(elapsed);

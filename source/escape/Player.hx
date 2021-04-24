@@ -23,7 +23,7 @@ class Player extends FlxSprite {
 
     this.color = color;
 
-    makeGraphic(32, 32, FlxColor.LIME);
+    makeGraphic(24, 48, FlxColor.LIME);
 
     drag.x = DRAG;
     acceleration.y = GRAVITY;
@@ -72,7 +72,11 @@ class Player extends FlxSprite {
     actionMessage.hide();
   }
 
-  public function onHitSpikes(obj1: Dynamic, obj2: Dynamic) {
+  public static function onHitSpikes(player: Player, spike: Spike) {
+    player.hitSpike(spike);
+  }
+
+  public function hitSpike(spike: Spike) {
     // TODO: bloody spikes animation
     // set this.killing = true
     // when animation done, kill!
