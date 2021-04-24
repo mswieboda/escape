@@ -5,7 +5,6 @@ import flixel.FlxState;
 
 class PlayState extends FlxState {
   var level: Level;
-  var spikes: Spikes;
   var player: Player;
   var gameOverMenu: GameOverMenu;
 
@@ -17,14 +16,11 @@ class PlayState extends FlxState {
     FlxG.debugger.visible = true;
     FlxG.debugger.drawDebug = true;
 
-    level = new Level(AssetPaths.level__txt, AssetPaths.tiles__png);
-    add(level);
-
     player = new Player(30, 30);
-    add(player);
 
-    spikes = new Spikes();
-    add(spikes);
+    level = new Level(player, AssetPaths.level__txt, AssetPaths.tiles__png);
+
+    add(level);
 
     gameOverMenu = new GameOverMenu();
     add(gameOverMenu);
@@ -33,9 +29,6 @@ class PlayState extends FlxState {
   }
 
   override function update(elapsed: Float) {
-    FlxG.collide(player, level);
-    FlxG.collide(player, spikes, player.onHitSpikes);
-
     Camera.update(elapsed);
 
     gameOverCheck();

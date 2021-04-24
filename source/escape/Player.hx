@@ -64,10 +64,14 @@ class Player extends FlxSprite {
     }
   }
 
-  public function onHitSpikes(player: Player, spike: Spike) {
+  public function onHitSpikes(obj1: Dynamic, obj2: Dynamic) {
     // TODO: bloody spikes animation
     // set this.killing = true
     // when animation done, kill!
     kill();
+  }
+
+  public static function onDoorTrigger(player: Player, obj2: Trigger) {
+    player.alpha = 0.3;
   }
 }

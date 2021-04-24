@@ -22,6 +22,5 @@ class Door extends FlxGroup {
     trigger = new Trigger(x -  WIDTH / 2, y - HEIGHT / 2, WIDTH * 2, HEIGHT * 2);
 
     add(sprite);
-    add(trigger);
   }
 }

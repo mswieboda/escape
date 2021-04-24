@@ -1,29 +1,56 @@
 package escape;
 
+import flixel.FlxG;
 import flixel.group.FlxGroup;
 import flixel.tile.FlxTilemap;
 import flixel.system.FlxAssets;
 import openfl.Assets;
 
 class Level extends FlxGroup {
-  var doors: FlxGroup;
+  var player: Player;
   var tiles: FlxTilemap;
+  var colliders: FlxGroup;
+  var doors: FlxGroup;
+  var doorTriggers: FlxGroup;
+  var spikes: Spikes;
 
   static inline var TILE_WIDTH = 32;
   static inline var TILE_HEIGHT = 32;
 
-  public function new(levelData: String, tileGraphic: FlxTilemapGraphicAsset) {
+  public function new(
+    player: Player,
+    levelData: String,
+    tileGraphic: FlxTilemapGraphicAsset
+  ) {
     super();
 
+    this.player = player;
+
+    tiles = new FlxTilemap();
+    colliders = new FlxGroup();
     doors = new FlxGroup();
+    doorTriggers = new FlxGroup();
+    spikes = new Spikes();
 
     loadTiles(levelData, tileGraphic);
 
+    colliders.add(tiles);
+    colliders.add(doors);
+
     add(tiles);
     add(doors);
+    add(doorTriggers);
+    add(player);
+    add(spikes);
   }
 
   override function update(elapsed: Float) {
+    FlxG.collide(player, colliders);
+    FlxG.collide(player, spikes, player.onHitSpikes);
+
+    player.alpha = 1;
+    FlxG.overlap(player, doorTriggers, Player.onDoorTrigger);
+
     super.update(elapsed);
   }
 
@@ -57,7 +84,10 @@ class Level extends FlxGroup {
         if (tileData == null) {
           switch(tile) {
             case Door.TILE:
-              doors.add(new Door(col * TILE_WIDTH, row * TILE_HEIGHT));
+              var door = new Door(col * TILE_WIDTH, row * TILE_HEIGHT);
+
+              doors.add(door);
+              doorTriggers.add(door.trigger);
             default:
               trace('>>> [$row, $col]: ??? $tile');
           }
@@ -71,7 +101,6 @@ class Level extends FlxGroup {
       levelData.push(rowData);
     }
 
-    tiles = new FlxTilemap();
     tiles.loadMapFrom2DArray(
       levelData,
       tileGraphic,

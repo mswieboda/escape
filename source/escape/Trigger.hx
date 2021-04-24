@@ -7,7 +7,6 @@ class Trigger extends FlxObject {
     super(x, y, width, height);
 
     immovable = true;
-    solid = false;
     moves = false;
   }
 }
