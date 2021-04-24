@@ -5,7 +5,7 @@ import flixel.group.FlxGroup;
 import flixel.util.FlxColor;
 
 class Door extends FlxGroup {
-  public static inline var TILE = 'd';
+  public static inline var TILE = 'D';
   public static inline var WIDTH = 32;
   public static inline var HEIGHT = 64;
 
@@ -19,6 +19,7 @@ class Door extends FlxGroup {
 
     sprite = new FlxSprite(x, y);
     sprite.immovable = true;
+
     sprite.makeGraphic(WIDTH, HEIGHT, FlxColor.BROWN);
 
     trigger = new DoorTrigger(x - WIDTH / 2, y, WIDTH * 2, HEIGHT, this);

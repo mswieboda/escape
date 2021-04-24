@@ -12,6 +12,7 @@ class Level extends FlxGroup {
   var colliders: FlxGroup;
   var doors: FlxGroup;
   var doorTriggers: FlxGroup;
+  var ladders: FlxGroup;
   var spikes: Spikes;
 
   static inline var TILE_WIDTH = 32;
@@ -30,6 +31,7 @@ class Level extends FlxGroup {
     colliders = new FlxGroup();
     doors = new FlxGroup();
     doorTriggers = new FlxGroup();
+    ladders = new FlxGroup();
     spikes = new Spikes();
 
     loadTiles(levelData, tileGraphic);
@@ -40,6 +42,7 @@ class Level extends FlxGroup {
     add(tiles);
     add(doors);
     add(doorTriggers);
+    add(ladders);
     add(player);
     add(spikes);
   }
@@ -50,6 +53,7 @@ class Level extends FlxGroup {
     FlxG.collide(player, colliders);
     FlxG.collide(player, spikes, Player.onHitSpikes);
     FlxG.overlap(player, doorTriggers, Player.onDoorTrigger, Door.onDoorTrigger);
+    FlxG.overlap(player, ladders, Player.onLadderTrigger);
 
     super.update(elapsed);
   }
@@ -82,7 +86,7 @@ class Level extends FlxGroup {
         var tileData = Std.parseInt(tile);
 
         if (tileData == null) {
-          switch(tile) {
+          switch(tile.toUpperCase()) {
             case Door.TILE:
               var prevTile = levelStrData[row - 1][col];
               var nextTile = levelStrData[row + 1][col];
@@ -98,6 +102,26 @@ class Level extends FlxGroup {
                 } else {
                   tileData = 1;
                 }
+              }
+            case Ladder.TILE:
+              var prevTile = levelStrData[row - 1][col];
+
+              tileData = 0;
+
+              if (prevTile != Ladder.TILE) {
+                var ladderTiles = 0;
+
+                for (ladderRow in row...levelStrData.length) {
+                  if (levelStrData[ladderRow][col] == Ladder.TILE) {
+                    ladderTiles++;
+                  } else {
+                    break;
+                  }
+                }
+
+                var ladder = new Ladder(col * TILE_WIDTH, row * TILE_HEIGHT, ladderTiles);
+
+                ladders.add(ladder);
               }
             default:
               trace('>>> [$row, $col]: ??? $tile');

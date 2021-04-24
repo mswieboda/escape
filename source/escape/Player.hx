@@ -9,6 +9,7 @@ import flixel.util.FlxSpriteUtil;
 class Player extends FlxSprite {
   static inline var MOVEMENT_ACCELERATION = 640;
   static inline var JUMP_SPEED = 320;
+  static inline var LADDER_SPEED = 160;
   static inline var DRAG: Int = 640;
   static inline var GRAVITY = 640;
   static inline var MAX_VELOCITY_X = 160;
@@ -16,7 +17,7 @@ class Player extends FlxSprite {
 
   public var actionMessage: ActionMessage;
 
-  var direction: Int;
+  var climbing = false;
 
   public function new(x: Float, y: Float, color: FlxColor = FlxColor.WHITE) {
     super(x, y);
@@ -61,7 +62,7 @@ class Player extends FlxSprite {
 
     // TODO: check `velocity.y == 0` etc (not currently working, it's `7`)
     // to see if they're on the floor, before jumping
-    if (jump) {
+    if (jump && !climbing) {
       // so we're not initially colliding with the floor
       y -= 1;
       velocity.y = -JUMP_SPEED;
@@ -69,6 +70,8 @@ class Player extends FlxSprite {
   }
 
   public function updateBeforeCollisionChecks(elapsed: Float) {
+    climbing = false;
+    acceleration.y = GRAVITY;
     actionMessage.hide();
   }
 
@@ -88,7 +91,6 @@ class Player extends FlxSprite {
   }
 
   function doorTrigger(trigger: DoorTrigger) {
-    // TODO: display message for action key "SPACE to open"
     actionMessage.show("SPACE/ENTER to open");
 
     var door = trigger.door;
@@ -96,5 +98,25 @@ class Player extends FlxSprite {
     if (door.locked && FlxG.keys.anyJustPressed([SPACE, ENTER])) {
       door.unlock();
     }
+  }
+
+  public static function onLadderTrigger(player: Player, ladder: Ladder) {
+    player.ladderTrigger(ladder);
+  }
+
+  function ladderTrigger(ladder: Ladder) {
+    actionMessage.show("DOWN/UP to descend/climb");
+
+    velocity.y = 0;
+    acceleration.y = 0;
+
+    var down = FlxG.keys.anyPressed([DOWN, S]);
+    var up = FlxG.keys.anyPressed([UP, W]);
+
+    if (down && up) up = down = false;
+    if (!down && !up) return;
+
+    climbing = true;
+    velocity.y = down ? LADDER_SPEED : -LADDER_SPEED;
   }
 }
