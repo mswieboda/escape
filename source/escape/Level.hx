@@ -84,15 +84,25 @@ class Level extends FlxGroup {
         if (tileData == null) {
           switch(tile) {
             case Door.TILE:
-              var door = new Door(col * TILE_WIDTH, row * TILE_HEIGHT);
+              var prevTile = levelStrData[row - 1][col];
+              var nextTile = levelStrData[row + 1][col];
 
-              doors.add(door);
-              doorTriggers.add(door.trigger);
+              tileData = 0;
+
+              if (prevTile != Door.TILE) {
+                if (nextTile == Door.TILE) {
+                  var door = new Door(col * TILE_WIDTH, row * TILE_HEIGHT);
+
+                  doors.add(door);
+                  doorTriggers.add(door.trigger);
+                } else {
+                  tileData = 1;
+                }
+              }
             default:
               trace('>>> [$row, $col]: ??? $tile');
+              tileData = 0;
           }
-
-          tileData = 0;
         }
 
         rowData.push(tileData);
