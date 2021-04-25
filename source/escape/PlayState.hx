@@ -22,8 +22,6 @@ class PlayState extends FlxState {
   }
 
   override function update(elapsed: Float) {
-    Camera.update(elapsed);
-
     gameOverCheck();
 
     super.update(elapsed);

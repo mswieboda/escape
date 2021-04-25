@@ -34,6 +34,8 @@ class Level extends FlxGroup {
 
     this.player = player;
 
+    Camera.setup(player);
+
     tiles = new FlxTilemap();
     colliders = new FlxGroup();
     doors = new FlxGroup();
@@ -60,6 +62,8 @@ class Level extends FlxGroup {
   }
 
   override function update(elapsed: Float) {
+    Camera.update(elapsed, topSpikes.cameraMinY());
+
     super.update(elapsed);
 
     player.updateBeforeCollisionChecks(elapsed);
