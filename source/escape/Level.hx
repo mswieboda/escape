@@ -174,10 +174,10 @@ class Level extends FlxGroup {
   }
 
   function addDoor(row: Int, col: Int, levelStrData: Array<Array<String>>): Int {
-    var prevRowTile = levelStrData[row - 1][col];
-    var nextRowTile = levelStrData[row + 1][col];
+    var prevRowTile = levelStrData[row - 1][col].toUpperCase();
+    var nextRowTile = levelStrData[row + 1][col].toUpperCase();
 
-    if (prevRowTile.toUpperCase() != Door.TILE && nextRowTile.toUpperCase() == Door.TILE) {
+    if (prevRowTile != Door.TILE && nextRowTile == Door.TILE) {
       var door = new Door(col * TILE_WIDTH, row * TILE_HEIGHT);
 
       doors.add(door);
@@ -188,10 +188,10 @@ class Level extends FlxGroup {
   }
 
   function addLadder(row: Int, col: Int, levelStrData: Array<Array<String>>, ladderTileData: Array<LadderData>): Int {
-    var prevRowTile = levelStrData[row - 1][col];
-    var nextRowTile = levelStrData[row + 1][col];
-    var prevColTile = levelStrData[row][col - 1];
-    var nextColTile = levelStrData[row][col + 1];
+    var prevRowTile = levelStrData[row - 1][col].toUpperCase();
+    var nextRowTile = levelStrData[row + 1][col].toUpperCase();
+    var prevColTile = levelStrData[row][col - 1].toUpperCase();
+    var nextColTile = levelStrData[row][col + 1].toUpperCase();
 
     var tileData = 0;
 
@@ -202,7 +202,7 @@ class Level extends FlxGroup {
 
     var section = Ladder.MIDDLE;
 
-    if (prevRowTile.toUpperCase() != Ladder.TILE) {
+    if (prevRowTile != Ladder.TILE) {
       section = Ladder.TOP;
     } else if (nextRowTile != Ladder.TILE) {
       section = Ladder.BOTTOM;
@@ -223,9 +223,24 @@ class Level extends FlxGroup {
     var nextColTile = levelStrData[row][col + 1];
 
     var section = Spike.FLOOR;
-    // determine section
-    // if (prevRowTile.toUpperCase() != Spike.TILE && nextRowTile.toUpperCase() == Spike.TILE) {
-    // }
+
+    if (prevColTile == '1') {
+      // 1s?
+      section = Spike.RIGHT;
+    } else if (nextColTile == '1') {
+      // ?s1 (? is not 1)
+      section = Spike.LEFT;
+    } else if (prevRowTile == '0' && nextRowTile == '1') {
+      // ?0?
+      // 0s0
+      // ?1?
+      section = Spike.FLOOR;
+    } else if (prevRowTile == '1') {
+      // ?1?
+      // 0s0
+      // ?@? (@ is ? but not 1)
+      section = Spike.TOP;
+    }
 
     var spike = new Spike(col * TILE_WIDTH, row * TILE_HEIGHT, section);
 
@@ -235,13 +250,13 @@ class Level extends FlxGroup {
   }
 
   function addLava(row: Int, col: Int, levelStrData: Array<Array<String>>): Int {
-    var prevColTile = levelStrData[row][col - 1];
-    var nextColTile = levelStrData[row][col + 1];
+    var prevColTile = levelStrData[row][col - 1].toUpperCase();
+    var nextColTile = levelStrData[row][col + 1].toUpperCase();
     var section = Lava.MID;
 
-    if (prevColTile.toUpperCase() != Lava.TILE) {
+    if (prevColTile != Lava.TILE) {
       section = Lava.LEFT;
-    } else if (nextColTile.toUpperCase() != Lava.TILE) {
+    } else if (nextColTile != Lava.TILE) {
       section = Lava.RIGHT;
     }
 
