@@ -8,12 +8,15 @@ class Ladder extends FlxGroup {
   public static inline var TILE = 'L';
   public static inline var WIDTH = 32;
   public static inline var HEIGHT = 32;
+  public static inline var TOP = 0;
+  public static inline var MIDDLE = 1;
+  public static inline var BOTTOM = 2;
 
   public var trigger: LadderTrigger;
 
   var sprite: FlxSprite;
 
-  public function new(x: Float, y: Float, tiles: Int) {
+  public function new(x: Float, y: Float, section: Int) {
     super();
 
     sprite = new FlxSprite(x, y);
@@ -21,9 +24,10 @@ class Ladder extends FlxGroup {
     sprite.moves = false;
     sprite.solid = false;
 
-    sprite.makeGraphic(WIDTH, HEIGHT * tiles, 0x33333333);
+    sprite.loadGraphic(AssetPaths.ladder__png, true, WIDTH, HEIGHT);
+    sprite.animation.frameIndex = section;
 
-    trigger = new LadderTrigger(x, y - HEIGHT / 2, WIDTH, HEIGHT * (tiles + 1), this);
+    trigger = new LadderTrigger(x, y - HEIGHT / 2, WIDTH, HEIGHT * 2, this);
 
     add(sprite);
   }

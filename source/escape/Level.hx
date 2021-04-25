@@ -112,6 +112,7 @@ class Level extends FlxGroup {
               }
             case Ladder.TILE:
               var prevRowTile = levelStrData[row - 1][col];
+              var nextRowTile = levelStrData[row + 1][col];
               var prevColTile = levelStrData[row][col - 1];
               var nextColTile = levelStrData[row][col + 1];
 
@@ -122,22 +123,18 @@ class Level extends FlxGroup {
                 ladderTileData.push({col: col, row: row, frames: null});
               }
 
+              var section = Ladder.MIDDLE;
+
               if (prevRowTile != Ladder.TILE) {
-                var ladderTiles = 0;
-
-                for (ladderRow in row...levelStrData.length) {
-                  if (levelStrData[ladderRow][col] == Ladder.TILE) {
-                    ladderTiles++;
-                  } else {
-                    break;
-                  }
-                }
-
-                var ladder = new Ladder(col * TILE_WIDTH, row * TILE_HEIGHT, ladderTiles);
-
-                ladders.add(ladder);
-                ladderTriggers.add(ladder.trigger);
+                section = Ladder.TOP;
+              } else if (nextRowTile != Ladder.TILE) {
+                section = Ladder.BOTTOM;
               }
+
+              var ladder = new Ladder(col * TILE_WIDTH, row * TILE_HEIGHT, section);
+
+              ladders.add(ladder);
+              ladderTriggers.add(ladder.trigger);
             default:
               trace('>>> [$row, $col]: ??? $tile');
               tileData = 0;
