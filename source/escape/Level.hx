@@ -102,13 +102,11 @@ class Level extends FlxGroup {
 
               tileData = 0;
 
-              if (prevRowTile != Door.TILE) {
-                if (nextRowTile == Door.TILE) {
-                  var door = new Door(col * TILE_WIDTH, row * TILE_HEIGHT);
+              if (prevRowTile.toUpperCase() != Door.TILE && nextRowTile.toUpperCase() == Door.TILE) {
+                var door = new Door(col * TILE_WIDTH, row * TILE_HEIGHT);
 
-                  doors.add(door);
-                  doorTriggers.add(door.trigger);
-                }
+                doors.add(door);
+                doorTriggers.add(door.trigger);
               }
             case Ladder.TILE:
               var prevRowTile = levelStrData[row - 1][col];
@@ -125,7 +123,7 @@ class Level extends FlxGroup {
 
               var section = Ladder.MIDDLE;
 
-              if (prevRowTile != Ladder.TILE) {
+              if (prevRowTile.toUpperCase() != Ladder.TILE) {
                 section = Ladder.TOP;
               } else if (nextRowTile != Ladder.TILE) {
                 section = Ladder.BOTTOM;

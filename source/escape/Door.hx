@@ -8,11 +8,13 @@ class Door extends FlxGroup {
   public static inline var TILE = 'D';
   public static inline var WIDTH = 32;
   public static inline var HEIGHT = 64;
+  public static inline var FPS = 6;
 
   public var trigger: Trigger;
   public var locked: Bool;
 
   var sprite: FlxSprite;
+  var animating = false;
 
   public function new(x: Float, y: Float, locked = true) {
     super();
@@ -20,7 +22,14 @@ class Door extends FlxGroup {
     sprite = new FlxSprite(x, y);
     sprite.immovable = true;
 
-    sprite.makeGraphic(WIDTH, HEIGHT, FlxColor.BROWN);
+    var frames = [for(i in 0...11) i];
+    var frameReversed = frames.copy();
+
+    frameReversed.reverse();
+
+    sprite.loadGraphic(AssetPaths.door__png, true, WIDTH, HEIGHT);
+    sprite.animation.add("up", frames, FPS, false);
+    sprite.animation.add("down", frameReversed, FPS, false);
 
     trigger = new DoorTrigger(x - WIDTH / 2, y, WIDTH * 2, HEIGHT, this);
 
@@ -29,19 +38,46 @@ class Door extends FlxGroup {
     add(sprite);
   }
 
-  public function unlock() {
-    trace(">>> Door unlock");
-    locked = false;
-    sprite.solid = false;
+  override public function update(elapsed: Float) {
+    super.update(elapsed);
 
-    // TODO: change sprite frame
+    checkLocked();
+  }
+
+  function checkLocked() {
+    if (!animating || !sprite.animation.finished) return;
+
+    if (locked) {
+      setUnlocked();
+    } else {
+      setLocked();
+    }
+  }
+
+  public function unlock() {
+    trace(">>> Door unlocking");
+    animating = true;
+    sprite.animation.play("up");
   }
 
   public function lock() {
+    trace(">>> Door locking");
+    animating = true;
+    sprite.animation.play("down");
+  }
+
+  function setLocked() {
+    trace(">>> Door locked!");
+    animating = false;
     locked = true;
     sprite.solid = true;
+  }
 
-    // TODO: change sprite frame
+  function setUnlocked() {
+    trace(">>> Door unlocked!");
+    animating = false;
+    locked = false;
+    sprite.solid = false;
   }
 
   public static function onDoorTrigger(player: Player, trigger: DoorTrigger): Bool {
