@@ -19,7 +19,7 @@ class Level extends FlxGroup {
   var doorTriggers: FlxGroup;
   var ladders: FlxGroup;
   var ladderTriggers: FlxGroup;
-  var spikes: Spikes;
+  var spikes: TopSpikes;
 
   static inline var TILE_WIDTH = 32;
   static inline var TILE_HEIGHT = 32;
@@ -39,7 +39,7 @@ class Level extends FlxGroup {
     doorTriggers = new FlxGroup();
     ladders = new FlxGroup();
     ladderTriggers = new FlxGroup();
-    spikes = new Spikes();
+    spikes = new TopSpikes();
 
     loadTiles(levelData, tileGraphic);
 
@@ -97,42 +97,9 @@ class Level extends FlxGroup {
         if (tileData == null) {
           switch(tile.toUpperCase()) {
             case Door.TILE:
-              var prevRowTile = levelStrData[row - 1][col];
-              var nextRowTile = levelStrData[row + 1][col];
-
-              tileData = 0;
-
-              if (prevRowTile.toUpperCase() != Door.TILE && nextRowTile.toUpperCase() == Door.TILE) {
-                var door = new Door(col * TILE_WIDTH, row * TILE_HEIGHT);
-
-                doors.add(door);
-                doorTriggers.add(door.trigger);
-              }
+              tileData = addDoor(row, col, levelStrData);
             case Ladder.TILE:
-              var prevRowTile = levelStrData[row - 1][col];
-              var nextRowTile = levelStrData[row + 1][col];
-              var prevColTile = levelStrData[row][col - 1];
-              var nextColTile = levelStrData[row][col + 1];
-
-              tileData = 0;
-
-              if (prevColTile != "0" || nextColTile != "0") {
-                tileData = 1;
-                ladderTileData.push({col: col, row: row, frames: null});
-              }
-
-              var section = Ladder.MIDDLE;
-
-              if (prevRowTile.toUpperCase() != Ladder.TILE) {
-                section = Ladder.TOP;
-              } else if (nextRowTile != Ladder.TILE) {
-                section = Ladder.BOTTOM;
-              }
-
-              var ladder = new Ladder(col * TILE_WIDTH, row * TILE_HEIGHT, section);
-
-              ladders.add(ladder);
-              ladderTriggers.add(ladder.trigger);
+              tileData = addLadder(row, col, levelStrData, ladderTileData);
             default:
               trace('>>> [$row, $col]: ??? $tile');
               tileData = 0;
@@ -174,7 +141,7 @@ class Level extends FlxGroup {
     }
   }
 
-  function tileToSprite(tileProperties: FlxTileProperties, frames: FlxImageFrame): FlxSprite {
+  static function tileToSprite(tileProperties: FlxTileProperties, frames: FlxImageFrame): FlxSprite {
     var tileSprite = new FlxSprite(tileProperties.x, tileProperties.y);
 
     tileSprite.frames = frames;
@@ -184,6 +151,49 @@ class Level extends FlxGroup {
     tileSprite.blend = tileProperties.blend;
 
     return tileSprite;
+  }
+
+  function addDoor(row: Int, col: Int, levelStrData: Array<Array<String>>): Int {
+    var prevRowTile = levelStrData[row - 1][col];
+    var nextRowTile = levelStrData[row + 1][col];
+
+    if (prevRowTile.toUpperCase() != Door.TILE && nextRowTile.toUpperCase() == Door.TILE) {
+      var door = new Door(col * TILE_WIDTH, row * TILE_HEIGHT);
+
+      doors.add(door);
+      doorTriggers.add(door.trigger);
+    }
+
+    return 0;
+  }
+
+  function addLadder(row: Int, col: Int, levelStrData: Array<Array<String>>, ladderTileData: Array<LadderData>): Int {
+    var prevRowTile = levelStrData[row - 1][col];
+    var nextRowTile = levelStrData[row + 1][col];
+    var prevColTile = levelStrData[row][col - 1];
+    var nextColTile = levelStrData[row][col + 1];
+
+    var tileData = 0;
+
+    if (prevColTile != "0" || nextColTile != "0") {
+      tileData = 1;
+      ladderTileData.push({col: col, row: row, frames: null});
+    }
+
+    var section = Ladder.MIDDLE;
+
+    if (prevRowTile.toUpperCase() != Ladder.TILE) {
+      section = Ladder.TOP;
+    } else if (nextRowTile != Ladder.TILE) {
+      section = Ladder.BOTTOM;
+    }
+
+    var ladder = new Ladder(col * TILE_WIDTH, row * TILE_HEIGHT, section);
+
+    ladders.add(ladder);
+    ladderTriggers.add(ladder.trigger);
+
+    return tileData;
   }
 }
 
