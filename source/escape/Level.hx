@@ -18,6 +18,7 @@ class Level extends FlxGroup {
   var doors: FlxGroup;
   var doorTriggers: FlxGroup;
   var ladders: FlxGroup;
+  var ladderTriggers: FlxGroup;
   var spikes: Spikes;
 
   static inline var TILE_WIDTH = 32;
@@ -37,29 +38,32 @@ class Level extends FlxGroup {
     doors = new FlxGroup();
     doorTriggers = new FlxGroup();
     ladders = new FlxGroup();
+    ladderTriggers = new FlxGroup();
     spikes = new Spikes();
 
     loadTiles(levelData, tileGraphic);
 
     colliders.add(tiles);
     colliders.add(doors);
+    colliders.add(ladders);
 
     add(doors);
     add(doorTriggers);
     add(ladders);
+    add(ladderTriggers);
     add(player);
     add(spikes);
   }
 
   override function update(elapsed: Float) {
+    super.update(elapsed);
+
     player.updateBeforeCollisionChecks(elapsed);
 
     FlxG.collide(player, colliders);
     FlxG.collide(player, spikes, Player.onHitSpikes);
     FlxG.overlap(player, doorTriggers, Player.onDoorTrigger, Door.onDoorTrigger);
-    FlxG.overlap(player, ladders, Player.onLadderTrigger);
-
-    super.update(elapsed);
+    FlxG.overlap(player, ladderTriggers, Player.onLadderTrigger);
   }
 
   static function parseCSV(csv: String): Array<Array<String>> {
@@ -76,7 +80,7 @@ class Level extends FlxGroup {
 
   function loadTiles(csv: String, tileGraphic: FlxTilemapGraphicAsset) {
     var levelData: Array<Array<Int>> = [];
-    var ladderTileCoords: Array<Array<Int>> = [];
+    var ladderTileData: Array<LadderData> = [];
 
     if (Assets.exists(csv)) {
       csv = Assets.getText(csv);
@@ -115,7 +119,7 @@ class Level extends FlxGroup {
 
               if (prevColTile != "0" || nextColTile != "0") {
                 tileData = 1;
-                ladderTileCoords.push([col, row]);
+                ladderTileData.push({col: col, row: row, frames: null});
               }
 
               if (prevRowTile != Ladder.TILE) {
@@ -132,6 +136,7 @@ class Level extends FlxGroup {
                 var ladder = new Ladder(col * TILE_WIDTH, row * TILE_HEIGHT, ladderTiles);
 
                 ladders.add(ladder);
+                ladderTriggers.add(ladder.trigger);
               }
             default:
               trace('>>> [$row, $col]: ??? $tile');
@@ -157,10 +162,14 @@ class Level extends FlxGroup {
 
     // swap tiles with ladders on them to sprites (to get no collision)
     // then add the sprite to this FlxGroup (after all tiles)
-    for (coord in ladderTileCoords) {
-      var tile = tiles.getTile(coord[0], coord[1]);
-      var frames = FlxImageFrame.fromGraphic(tiles.graphic, new FlxRect((tile - 1) * TILE_WIDTH, 0, TILE_WIDTH, TILE_HEIGHT));
-      var sprite = tiles.tileToSprite(coord[0], coord[1], 0, tp -> tileToSprite(tp, frames));
+    for (data in ladderTileData) {
+      var tile = tiles.getTile(data.col, data.row);
+
+      data.frames = FlxImageFrame.fromGraphic(tiles.graphic, new FlxRect((tile - 1) * TILE_WIDTH, 0, TILE_WIDTH, TILE_HEIGHT));
+    }
+
+    for (data in ladderTileData) {
+      var sprite = tiles.tileToSprite(data.col, data.row, 0, tp -> tileToSprite(tp, data.frames));
 
       sprite.immovable = true;
       sprite.moves = false;
@@ -181,4 +190,10 @@ class Level extends FlxGroup {
 
     return tileSprite;
   }
+}
+
+typedef LadderData = {
+  col: Int,
+  row: Int,
+  frames: FlxImageFrame
 }

@@ -100,23 +100,25 @@ class Player extends FlxSprite {
     }
   }
 
-  public static function onLadderTrigger(player: Player, ladder: Ladder) {
-    player.ladderTrigger(ladder);
+  public static function onLadderTrigger(player: Player, trigger: LadderTrigger) {
+    player.ladderTrigger(trigger);
   }
 
-  function ladderTrigger(ladder: Ladder) {
+  function ladderTrigger(trigger: LadderTrigger) {
     actionMessage.show("DOWN/UP to descend/climb");
+
+    var ladder = trigger.ladder;
+    var down = FlxG.keys.anyPressed([DOWN, S]);
+    var up = FlxG.keys.anyPressed([UP, W]);
 
     velocity.y = 0;
     acceleration.y = 0;
-
-    var down = FlxG.keys.anyPressed([DOWN, S]);
-    var up = FlxG.keys.anyPressed([UP, W]);
 
     if (down && up) up = down = false;
     if (!down && !up) return;
 
     climbing = true;
+
     velocity.y = down ? LADDER_SPEED : -LADDER_SPEED;
   }
 }
