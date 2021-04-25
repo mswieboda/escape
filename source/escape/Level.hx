@@ -1,8 +1,13 @@
 package escape;
 
 import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.graphics.frames.FlxImageFrame;
 import flixel.group.FlxGroup;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 import flixel.tile.FlxTilemap;
+import flixel.util.FlxDestroyUtil;
 import flixel.system.FlxAssets;
 import openfl.Assets;
 
@@ -39,7 +44,6 @@ class Level extends FlxGroup {
     colliders.add(tiles);
     colliders.add(doors);
 
-    add(tiles);
     add(doors);
     add(doorTriggers);
     add(ladders);
@@ -72,6 +76,7 @@ class Level extends FlxGroup {
 
   function loadTiles(csv: String, tileGraphic: FlxTilemapGraphicAsset) {
     var levelData: Array<Array<Int>> = [];
+    var ladderTileCoords: Array<Array<Int>> = [];
 
     if (Assets.exists(csv)) {
       csv = Assets.getText(csv);
@@ -88,27 +93,32 @@ class Level extends FlxGroup {
         if (tileData == null) {
           switch(tile.toUpperCase()) {
             case Door.TILE:
-              var prevTile = levelStrData[row - 1][col];
-              var nextTile = levelStrData[row + 1][col];
+              var prevRowTile = levelStrData[row - 1][col];
+              var nextRowTile = levelStrData[row + 1][col];
 
               tileData = 0;
 
-              if (prevTile != Door.TILE) {
-                if (nextTile == Door.TILE) {
+              if (prevRowTile != Door.TILE) {
+                if (nextRowTile == Door.TILE) {
                   var door = new Door(col * TILE_WIDTH, row * TILE_HEIGHT);
 
                   doors.add(door);
                   doorTriggers.add(door.trigger);
-                } else {
-                  tileData = 1;
                 }
               }
             case Ladder.TILE:
-              var prevTile = levelStrData[row - 1][col];
+              var prevRowTile = levelStrData[row - 1][col];
+              var prevColTile = levelStrData[row][col - 1];
+              var nextColTile = levelStrData[row][col + 1];
 
               tileData = 0;
 
-              if (prevTile != Ladder.TILE) {
+              if (prevColTile != "0" || nextColTile != "0") {
+                tileData = 1;
+                ladderTileCoords.push([col, row]);
+              }
+
+              if (prevRowTile != Ladder.TILE) {
                 var ladderTiles = 0;
 
                 for (ladderRow in row...levelStrData.length) {
@@ -142,5 +152,33 @@ class Level extends FlxGroup {
       TILE_HEIGHT,
       AUTO
     );
+
+    add(tiles);
+
+    // swap tiles with ladders on them to sprites (to get no collision)
+    // then add the sprite to this FlxGroup (after all tiles)
+    for (coord in ladderTileCoords) {
+      var tile = tiles.getTile(coord[0], coord[1]);
+      var frames = FlxImageFrame.fromGraphic(tiles.graphic, new FlxRect((tile - 1) * TILE_WIDTH, 0, TILE_WIDTH, TILE_HEIGHT));
+      var sprite = tiles.tileToSprite(coord[0], coord[1], 0, tp -> tileToSprite(tp, frames));
+
+      sprite.immovable = true;
+      sprite.moves = false;
+      sprite.solid = false;
+
+      add(sprite);
+    }
+  }
+
+  function tileToSprite(tileProperties: FlxTileProperties, frames: FlxImageFrame): FlxSprite {
+    var tileSprite = new FlxSprite(tileProperties.x, tileProperties.y);
+
+    tileSprite.frames = frames;
+    tileSprite.scale.copyFrom(tileProperties.scale);
+    tileProperties.scale = FlxDestroyUtil.put(tileProperties.scale);
+    tileSprite.alpha = tileProperties.alpha;
+    tileSprite.blend = tileProperties.blend;
+
+    return tileSprite;
   }
 }

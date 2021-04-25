@@ -23,7 +23,7 @@ class Ladder extends FlxGroup {
     sprite.immovable = true;
     sprite.moves = false;
 
-    sprite.makeGraphic(WIDTH, HEIGHT * tiles, FlxColor.GRAY);
+    sprite.makeGraphic(WIDTH, HEIGHT * tiles, 0x33333333);
 
     trigger = new Trigger(x, y - HEIGHT / 2, WIDTH, HEIGHT * (tiles + 1));
 
