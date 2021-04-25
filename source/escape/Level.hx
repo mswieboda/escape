@@ -130,6 +130,14 @@ class Level extends FlxGroup {
 
     add(tiles);
 
+    // set world bounds from tiles
+    FlxG.worldBounds.set(
+      -TILE_WIDTH,
+      -TILE_HEIGHT,
+      tiles.width + TILE_WIDTH,
+      tiles.height + TILE_HEIGHT
+    );
+
     // swap tiles with ladders on them to sprites (to get no collision)
     // then add the sprite to this FlxGroup (after all tiles)
     for (data in ladderTileData) {
