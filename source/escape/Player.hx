@@ -7,6 +7,8 @@ import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 
 class Player extends FlxSprite {
+  static inline var WIDTH = 24;
+  static inline var HEIGHT = 56;
   static inline var MOVEMENT_ACCELERATION = 640;
   static inline var JUMP_SPEED = 320;
   static inline var LADDER_SPEED = 160;
@@ -14,6 +16,7 @@ class Player extends FlxSprite {
   static inline var GRAVITY = 640;
   static inline var MAX_VELOCITY_X = 160;
   static inline var MAX_VELOCITY_Y = 640;
+  static inline var WALK_FPS = 3;
 
   public var actionMessage: ActionMessage;
 
@@ -24,7 +27,11 @@ class Player extends FlxSprite {
 
     this.color = color;
 
-    makeGraphic(24, 48, FlxColor.LIME);
+    loadGraphic(AssetPaths.player__png, true, WIDTH, HEIGHT);
+    animation.add("walk", [1, 0, 2, 0], WALK_FPS, false);
+
+    setFacingFlip(LEFT, false, false);
+    setFacingFlip(RIGHT, true, false);
 
     drag.x = DRAG;
     acceleration.y = GRAVITY;
@@ -52,12 +59,18 @@ class Player extends FlxSprite {
 
     FlxSpriteUtil.bound(this);
 
+    if (FlxG.keys.anyJustReleased(lefts.concat(rights))) {
+      animation.pause();
+    }
+
     if (left) {
       acceleration.x -= MOVEMENT_ACCELERATION;
       facing = LEFT;
+      animation.play("walk");
     } else if (right) {
       acceleration.x += MOVEMENT_ACCELERATION;
       facing = RIGHT;
+      animation.play("walk");
     }
 
     // TODO: check `velocity.y == 0` etc (not currently working, it's `7`)
