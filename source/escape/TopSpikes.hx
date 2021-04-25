@@ -1,6 +1,7 @@
 package escape;
 
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.group.FlxGroup;
 
 class TopSpikes extends FlxGroup {
@@ -13,5 +14,10 @@ class TopSpikes extends FlxGroup {
       var spike = new TopSpike(i * Spike.WIDTH, 0);
       add(spike);
     }
+
+    var trigger = new Trigger(0, 0, FlxG.width, 8);
+    trigger.moves = true;
+    trigger.velocity.y = Camera.SCROLL_SPEED;
+    add(trigger);
   }
 }

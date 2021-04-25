@@ -19,7 +19,8 @@ class Level extends FlxGroup {
   var doorTriggers: FlxGroup;
   var ladders: FlxGroup;
   var ladderTriggers: FlxGroup;
-  var spikes: TopSpikes;
+  var spikes: FlxGroup;
+  var topSpikes: TopSpikes;
 
   static inline var TILE_WIDTH = 32;
   static inline var TILE_HEIGHT = 32;
@@ -39,9 +40,12 @@ class Level extends FlxGroup {
     doorTriggers = new FlxGroup();
     ladders = new FlxGroup();
     ladderTriggers = new FlxGroup();
-    spikes = new TopSpikes();
+    spikes = new FlxGroup();
+    topSpikes = new TopSpikes();
 
     loadTiles(levelData, tileGraphic);
+
+    spikes.add(topSpikes);
 
     colliders.add(tiles);
     colliders.add(doors);
@@ -100,6 +104,10 @@ class Level extends FlxGroup {
               tileData = addDoor(row, col, levelStrData);
             case Ladder.TILE:
               tileData = addLadder(row, col, levelStrData, ladderTileData);
+            case Spike.TILE:
+              tileData = addSpike(row, col, levelStrData);
+            case Lava.TILE:
+              tileData = addLava(row, col, levelStrData);
             default:
               trace('>>> [$row, $col]: ??? $tile');
               tileData = 0;
@@ -194,6 +202,42 @@ class Level extends FlxGroup {
     ladderTriggers.add(ladder.trigger);
 
     return tileData;
+  }
+
+  function addSpike(row: Int, col: Int, levelStrData: Array<Array<String>>): Int {
+    var prevRowTile = levelStrData[row - 1][col];
+    var nextRowTile = levelStrData[row + 1][col];
+    var prevColTile = levelStrData[row][col - 1];
+    var nextColTile = levelStrData[row][col + 1];
+
+    var section = Spike.FLOOR;
+    // determine section
+    // if (prevRowTile.toUpperCase() != Spike.TILE && nextRowTile.toUpperCase() == Spike.TILE) {
+    // }
+
+    var spike = new Spike(col * TILE_WIDTH, row * TILE_HEIGHT, section);
+
+    spikes.add(spike);
+
+    return 0;
+  }
+
+  function addLava(row: Int, col: Int, levelStrData: Array<Array<String>>): Int {
+    var prevColTile = levelStrData[row][col - 1];
+    var nextColTile = levelStrData[row][col + 1];
+    var section = Lava.MID;
+
+    if (prevColTile.toUpperCase() != Lava.TILE) {
+      section = Lava.LEFT;
+    } else if (nextColTile.toUpperCase() != Lava.TILE) {
+      section = Lava.RIGHT;
+    }
+
+    var spike = new Lava(col * TILE_WIDTH, row * TILE_HEIGHT, section);
+
+    spikes.add(spike);
+
+    return 0;
   }
 }
 
