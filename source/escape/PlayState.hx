@@ -8,14 +8,7 @@ class PlayState extends FlxState {
   var player: Player;
   var gameOverMenu: GameOverMenu;
 
-  static inline var TILE_WIDTH = 32;
-  static inline var TILE_HEIGHT = 32;
-
   override public function create() {
-    FlxG.mouse.visible = false;
-    FlxG.debugger.visible = true;
-    FlxG.debugger.drawDebug = true;
-
     player = new Player(50, 10);
     gameOverMenu = new GameOverMenu();
 
@@ -24,8 +17,6 @@ class PlayState extends FlxState {
     add(level);
     add(player.actionMessage);
     add(gameOverMenu);
-
-    Camera.setup();
 
     super.create();
   }

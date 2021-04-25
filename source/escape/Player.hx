@@ -28,12 +28,12 @@ class Player extends FlxSprite {
 
     loadGraphic(AssetPaths.player__png, true, WIDTH, HEIGHT);
     animation.add("walkRightFoot", [1, 2, 1, 0], WALK_FPS, false);
-    animation.add("walkLeftFoot", [3, 5, 3, 0], WALK_FPS, false);
+    animation.add("walkLeftFoot", [3, 4, 3, 0], WALK_FPS, false);
 
     setFacingFlip(LEFT, true, false);
     setFacingFlip(RIGHT, false, false);
 
-    drag.set(DRAG, DRAG); // x = DRAG;
+    drag.set(DRAG, DRAG);
     acceleration.y = GRAVITY;
     maxVelocity.set(MAX_VELOCITY_X, MAX_VELOCITY_Y);
 
@@ -126,6 +126,8 @@ class Player extends FlxSprite {
   }
 
   function animateWalk() {
+    if (velocity.y != 0) return;
+
     if (animation.finished) {
       if (walkRightFoot) {
           walkRightFoot = false;
