@@ -61,7 +61,7 @@ class Action {
     left.addGamepad(DPAD_LEFT, PRESSED);
     right.addGamepad(DPAD_RIGHT, PRESSED);
     jump.addGamepad(A, JUST_PRESSED);
-    action.addKey(X, JUST_PRESSED);
+    action.addGamepad(X, JUST_PRESSED);
 
     // Add gamepad analog stick (as simulated DPAD) inputs
     up.addGamepad(LEFT_STICK_DIGITAL_UP, PRESSED);
@@ -85,13 +85,13 @@ class Action {
     menuCancel.addKey(BACKSPACE, JUST_PRESSED);
 
     // Add gamepad DPAD inputs
-    up.addGamepad(DPAD_UP, JUST_PRESSED);
-    down.addGamepad(DPAD_DOWN, JUST_PRESSED);
+    menuUp.addGamepad(DPAD_UP, JUST_PRESSED);
+    menuDown.addGamepad(DPAD_DOWN, JUST_PRESSED);
     menuAction.addGamepad(A, JUST_PRESSED);
-    menuCancel.addKey(B, JUST_PRESSED);
+    menuCancel.addGamepad(B, JUST_PRESSED);
 
     // Add gamepad analog stick (as simulated DPAD) inputs
-    menuUp.addGamepad(LEFT_STICK_DIGITAL_UP, PRESSED);
-    menuDown.addGamepad(LEFT_STICK_DIGITAL_DOWN, PRESSED);
+    menuUp.addGamepad(LEFT_STICK_DIGITAL_UP, JUST_PRESSED);
+    menuDown.addGamepad(LEFT_STICK_DIGITAL_DOWN, JUST_PRESSED);
   }
 }
