@@ -3,10 +3,9 @@ package escape;
 import flixel.FlxG;
 import flixel.input.actions.FlxAction.FlxActionAnalog;
 import flixel.input.actions.FlxAction.FlxActionDigital;
-import flixel.input.actions.FlxActionManager;
 
 class Action {
-  public static var actions: FlxActionManager;
+  public static var actions: ActionManager;
 
   public static var up: FlxActionDigital;
   public static var down: FlxActionDigital;
@@ -22,6 +21,8 @@ class Action {
   public static var menuCancel: FlxActionDigital;
 
   public static function addInputs() {
+    if (actions == null) actions = FlxG.inputs.add(new ActionManager());
+
     // actions
     up = new FlxActionDigital();
     down = new FlxActionDigital();
@@ -35,8 +36,6 @@ class Action {
     menuDown = new FlxActionDigital();
     menuAction = new FlxActionDigital();
     menuCancel = new FlxActionDigital();
-
-    if (actions == null) actions = FlxG.inputs.add(new FlxActionManager());
 
     actions.addActions([
       up,

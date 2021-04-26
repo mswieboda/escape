@@ -26,7 +26,7 @@ class PlayState extends FlxState {
   }
 
   override function update(elapsed: Float) {
-    if (!player.alive) openSubState(new GameOverMenu());
+    if (!player.alive && subState == null) openSubState(new GameOverMenu());
     if (Action.menu.triggered) openSubState(new PauseMenu());
 
     super.update(elapsed);

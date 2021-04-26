@@ -10,21 +10,21 @@ class PlayMenu extends FlxSubState {
 
   var title: String;
   var itemData: Array<MenuItems.ItemData>;
-  var persistentUpdate: Bool;
-  var persistentDraw: Bool;
+  var parentPersistentUpdate: Bool;
+  var parentPersistentDraw: Bool;
 
   public function new(
     title: String,
     itemData: Array<MenuItems.ItemData>,
-    persistentUpdate: Bool = false,
-    persistentDraw: Bool = true
+    parentPersistentUpdate: Bool = false,
+    parentPersistentDraw: Bool = true
   ) {
     super();
 
     this.title = title;
     this.itemData = itemData;
-    this.persistentUpdate = persistentUpdate;
-    this.persistentDraw = persistentDraw;
+    this.parentPersistentUpdate = parentPersistentUpdate;
+    this.parentPersistentDraw = parentPersistentDraw;
   }
 
   override public function create() {
@@ -43,8 +43,10 @@ class PlayMenu extends FlxSubState {
     add(new MenuItems(text.y + text.height + PADDING, itemData));
 
     if (_parentState != null) {
-      _parentState.persistentUpdate = persistentUpdate;
-      _parentState.persistentDraw = persistentDraw;
+      _parentState.persistentUpdate = parentPersistentUpdate;
+      _parentState.persistentDraw = parentPersistentDraw;
     }
+
+    Action.addInputs();
   }
 }
