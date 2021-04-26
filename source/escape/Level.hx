@@ -19,6 +19,7 @@ class Level extends FlxGroup {
   var doorTriggers: FlxGroup;
   var ladders: FlxGroup;
   var ladderTriggers: FlxGroup;
+  var wallJumpingTriggers: FlxGroup;
   var spikes: FlxGroup;
   var topSpikes: TopSpikes;
 
@@ -42,6 +43,7 @@ class Level extends FlxGroup {
     doorTriggers = new FlxGroup();
     ladders = new FlxGroup();
     ladderTriggers = new FlxGroup();
+    wallJumpingTriggers = new FlxGroup();
     spikes = new FlxGroup();
     topSpikes = new TopSpikes();
 
@@ -57,6 +59,7 @@ class Level extends FlxGroup {
     add(doorTriggers);
     add(ladders);
     add(ladderTriggers);
+    add(wallJumpingTriggers);
     add(player);
     add(spikes);
   }
@@ -72,6 +75,7 @@ class Level extends FlxGroup {
     FlxG.collide(player, spikes, Player.onHitSpikes);
     FlxG.overlap(player, doorTriggers, Player.onDoorTrigger, Door.onDoorTrigger);
     FlxG.overlap(player, ladderTriggers, Player.onLadderTrigger);
+    FlxG.overlap(player, wallJumpingTriggers, Player.onWallJumpTrigger);
   }
 
   static function parseCSV(csv: String): Array<Array<String>> {
@@ -116,6 +120,8 @@ class Level extends FlxGroup {
               trace('>>> [$row, $col]: ??? $tile');
               tileData = 0;
           }
+        } else if (tileData == 1) {
+          addWallJumpTrigger(row, col, levelStrData);
         }
 
         rowData.push(tileData);
@@ -174,8 +180,8 @@ class Level extends FlxGroup {
   }
 
   function addDoor(row: Int, col: Int, levelStrData: Array<Array<String>>): Int {
-    var prevRowTile = levelStrData[row - 1][col].toUpperCase();
-    var nextRowTile = levelStrData[row + 1][col].toUpperCase();
+    var prevRowTile = getTile(levelStrData, row - 1, col);
+    var nextRowTile = getTile(levelStrData, row + 1, col);
 
     if (prevRowTile != Door.TILE && nextRowTile == Door.TILE) {
       var door = new Door(col * TILE_WIDTH, row * TILE_HEIGHT);
@@ -188,11 +194,10 @@ class Level extends FlxGroup {
   }
 
   function addLadder(row: Int, col: Int, levelStrData: Array<Array<String>>, ladderTileData: Array<LadderData>): Int {
-    var prevRowTile = levelStrData[row - 1][col].toUpperCase();
-    var nextRowTile = levelStrData[row + 1][col].toUpperCase();
-    var prevColTile = levelStrData[row][col - 1].toUpperCase();
-    var nextColTile = levelStrData[row][col + 1].toUpperCase();
-
+    var prevRowTile = getTile(levelStrData, row - 1, col);
+    var nextRowTile = getTile(levelStrData, row + 1, col);
+    var prevColTile = getTile(levelStrData, row, col - 1);
+    var nextColTile = getTile(levelStrData, row, col + 1);
     var tileData = 0;
 
     if (prevColTile != "0" || nextColTile != "0") {
@@ -217,11 +222,10 @@ class Level extends FlxGroup {
   }
 
   function addSpike(row: Int, col: Int, levelStrData: Array<Array<String>>): Int {
-    var prevRowTile = levelStrData[row - 1][col];
-    var nextRowTile = levelStrData[row + 1][col];
-    var prevColTile = levelStrData[row][col - 1];
-    var nextColTile = levelStrData[row][col + 1];
-
+    var prevRowTile = getTile(levelStrData, row - 1, col);
+    var nextRowTile = getTile(levelStrData, row + 1, col);
+    var prevColTile = getTile(levelStrData, row, col - 1);
+    var nextColTile = getTile(levelStrData, row, col + 1);
     var section = Spike.FLOOR;
 
     if (prevColTile == '1') {
@@ -250,8 +254,8 @@ class Level extends FlxGroup {
   }
 
   function addLava(row: Int, col: Int, levelStrData: Array<Array<String>>): Int {
-    var prevColTile = levelStrData[row][col - 1].toUpperCase();
-    var nextColTile = levelStrData[row][col + 1].toUpperCase();
+    var prevColTile = getTile(levelStrData, row, col - 1);
+    var nextColTile = getTile(levelStrData, row, col + 1);
     var section = Lava.MID;
 
     if (prevColTile != Lava.TILE) {
@@ -265,6 +269,28 @@ class Level extends FlxGroup {
     spikes.add(spike);
 
     return 0;
+  }
+
+  function addWallJumpTrigger(row: Int, col: Int, levelStrData: Array<Array<String>>) {
+    var prevColTile = getTile(levelStrData, row, col - 1);
+    var nextColTile = getTile(levelStrData, row, col + 1);
+
+    if (prevColTile == '0' || nextColTile == '0') {
+      var trigger = new Trigger(
+        col * TILE_WIDTH - TILE_WIDTH / 2,
+        row * TILE_HEIGHT,
+        TILE_WIDTH * 2,
+        TILE_HEIGHT
+      );
+
+      wallJumpingTriggers.add(trigger);
+    }
+  }
+
+  static function getTile(levelStrData: Array<Array<String>>, row: Int, col: Int): String {
+    var safe = row >= 0 && row < levelStrData.length && col >= 0 && col < levelStrData[row].length;
+
+    return safe ? levelStrData[row][col].toUpperCase() : '0';
   }
 }
 

@@ -22,6 +22,7 @@ class Player extends FlxSprite {
 
   var climbing = false;
   var walkRightFoot = false;
+  var canWallJump = false;
 
   public function new(x: Float, y: Float) {
     super(x, y);
@@ -51,26 +52,45 @@ class Player extends FlxSprite {
     var rights = [FlxKey.RIGHT, FlxKey.D];
     var left = FlxG.keys.anyPressed(lefts);
     var right = FlxG.keys.anyPressed(rights);
-    var jump = FlxG.keys.anyJustPressed([UP, W]);
+    var down = FlxG.keys.anyPressed([DOWN, S]);
+    var up = FlxG.keys.anyPressed([UP, W]);
 
     if (left && right) left = right = false;
+    if (down && up) up = down = false;
 
     acceleration.x = 0;
     acceleration.y = climbing ? 0 : GRAVITY;
 
     if (left) {
-      acceleration.x -= MOVEMENT_ACCELERATION;
       facing = LEFT;
-      animateWalk();
     } else if (right) {
-      acceleration.x += MOVEMENT_ACCELERATION;
       facing = RIGHT;
-      animateWalk();
     }
 
-    if (jump && velocity.y == 0 && !climbing) {
-      velocity.y = -JUMP_SPEED;
-      animation.pause();
+    if (up || down) {
+      if (climbing) {
+        velocity.y = down ? LADDER_SPEED : -LADDER_SPEED;
+      } else if (up) {
+        if (canWallJump || velocity.y == 0) {
+          velocity.y = -JUMP_SPEED;
+
+          animation.pause();
+        }
+
+        if (canWallJump && (left || right)) {
+          velocity.x = right ? -MOVEMENT_ACCELERATION : MOVEMENT_ACCELERATION;
+        }
+      }
+    } else {
+      if (left) {
+        acceleration.x -= MOVEMENT_ACCELERATION;
+
+        animateWalk();
+      } else if (right) {
+        acceleration.x += MOVEMENT_ACCELERATION;
+
+        animateWalk();
+      }
     }
   }
 
@@ -112,17 +132,16 @@ class Player extends FlxSprite {
 
   function ladderTrigger(trigger: LadderTrigger) {
     actionMessage.show("DOWN/UP to descend/climb");
-
-    var ladder = trigger.ladder;
-    var down = FlxG.keys.anyPressed([DOWN, S]);
-    var up = FlxG.keys.anyPressed([UP, W]);
-
     climbing = true;
+  }
 
-    if (down && up) up = down = false;
-    if (!down && !up) return;
+  public static function onWallJumpTrigger(player: Player, trigger: Trigger) {
+    player.wallJumpTrigger(trigger);
+  }
 
-    velocity.y = down ? LADDER_SPEED : -LADDER_SPEED;
+  function wallJumpTrigger(trigger: Trigger) {
+    actionMessage.show("LEFT/RIGHT to wall jump");
+    canWallJump = true;
   }
 
   function animateWalk() {
