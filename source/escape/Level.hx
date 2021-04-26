@@ -19,12 +19,14 @@ class Level extends FlxGroup {
   var doorTriggers: FlxGroup;
   var ladders: FlxGroup;
   var ladderTriggers: FlxGroup;
-  var wallJumpingTriggers: FlxGroup;
+  var leftWallJumpTriggers: FlxGroup;
+  var rightWallJumpTriggers: FlxGroup;
   var spikes: FlxGroup;
   var topSpikes: TopSpikes;
 
   static inline var TILE_WIDTH = 32;
   static inline var TILE_HEIGHT = 32;
+  static inline var WALL_TRIGGER_WIDTH = 16;
 
   public function new(
     player: Player,
@@ -43,7 +45,8 @@ class Level extends FlxGroup {
     doorTriggers = new FlxGroup();
     ladders = new FlxGroup();
     ladderTriggers = new FlxGroup();
-    wallJumpingTriggers = new FlxGroup();
+    leftWallJumpTriggers = new FlxGroup();
+    rightWallJumpTriggers = new FlxGroup();
     spikes = new FlxGroup();
     topSpikes = new TopSpikes();
 
@@ -59,7 +62,8 @@ class Level extends FlxGroup {
     add(doorTriggers);
     add(ladders);
     add(ladderTriggers);
-    add(wallJumpingTriggers);
+    add(leftWallJumpTriggers);
+    add(rightWallJumpTriggers);
     add(player);
     add(spikes);
   }
@@ -75,7 +79,8 @@ class Level extends FlxGroup {
     FlxG.collide(player, spikes, Player.onHitSpikes);
     FlxG.overlap(player, doorTriggers, Player.onDoorTrigger, Door.onDoorTrigger);
     FlxG.overlap(player, ladderTriggers, Player.onLadderTrigger);
-    FlxG.overlap(player, wallJumpingTriggers, Player.onWallJumpTrigger);
+    FlxG.overlap(player, leftWallJumpTriggers, Player.onLeftWallJumpTrigger);
+    FlxG.overlap(player, rightWallJumpTriggers, Player.onRightWallJumpTrigger);
   }
 
   static function parseCSV(csv: String): Array<Array<String>> {
@@ -275,15 +280,26 @@ class Level extends FlxGroup {
     var prevColTile = getTile(levelStrData, row, col - 1);
     var nextColTile = getTile(levelStrData, row, col + 1);
 
-    if (prevColTile == '0' || nextColTile == '0') {
+    if (prevColTile == '0') {
       var trigger = new Trigger(
-        col * TILE_WIDTH - TILE_WIDTH / 2,
+        col * TILE_WIDTH - WALL_TRIGGER_WIDTH / 2,
         row * TILE_HEIGHT,
-        TILE_WIDTH * 2,
+        WALL_TRIGGER_WIDTH,
         TILE_HEIGHT
       );
 
-      wallJumpingTriggers.add(trigger);
+      rightWallJumpTriggers.add(trigger);
+    }
+
+    if (nextColTile == '0') {
+      var trigger = new Trigger(
+        col * TILE_WIDTH + TILE_WIDTH - WALL_TRIGGER_WIDTH / 2,
+        row * TILE_HEIGHT,
+        WALL_TRIGGER_WIDTH,
+        TILE_HEIGHT
+      );
+
+      leftWallJumpTriggers.add(trigger);
     }
   }
 

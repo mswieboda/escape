@@ -11,6 +11,7 @@ class Player extends FlxSprite {
   static inline var HEIGHT = 48;
   static inline var MOVEMENT_ACCELERATION = 640;
   static inline var JUMP_SPEED = 320;
+  static inline var WALL_JUMP_SPEED = 160;
   static inline var LADDER_SPEED = 160;
   static inline var DRAG: Int = 640;
   static inline var GRAVITY = 640;
@@ -71,14 +72,15 @@ class Player extends FlxSprite {
       if (climbing) {
         velocity.y = down ? LADDER_SPEED : -LADDER_SPEED;
       } else if (up) {
-        if (canWallJump || velocity.y == 0) {
+        if (velocity.y == 0) {
           velocity.y = -JUMP_SPEED;
 
           animation.pause();
-        }
+        } else if (canWallJump && (left || right)) {
+          velocity.y = -WALL_JUMP_SPEED;
+          velocity.x = left ? WALL_JUMP_SPEED : -WALL_JUMP_SPEED;
 
-        if (canWallJump && (left || right)) {
-          velocity.x = right ? -MOVEMENT_ACCELERATION : MOVEMENT_ACCELERATION;
+          animation.pause();
         }
       }
     } else {
@@ -135,13 +137,18 @@ class Player extends FlxSprite {
     climbing = true;
   }
 
-  public static function onWallJumpTrigger(player: Player, trigger: Trigger) {
-    player.wallJumpTrigger(trigger);
+  public static function onLeftWallJumpTrigger(player: Player, trigger: Trigger) {
+    player.wallJumpTrigger(trigger, true);
   }
 
-  function wallJumpTrigger(trigger: Trigger) {
+  public static function onRightWallJumpTrigger(player: Player, trigger: Trigger) {
+    player.wallJumpTrigger(trigger, false);
+  }
+
+  function wallJumpTrigger(trigger: Trigger, left: Bool) {
     actionMessage.show("LEFT/RIGHT to wall jump");
-    canWallJump = true;
+
+    canWallJump = FlxG.keys.anyPressed(left ? [LEFT, A] : [RIGHT, D]);
   }
 
   function animateWalk() {
