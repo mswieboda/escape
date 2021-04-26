@@ -1,20 +1,18 @@
 package escape;
 
+import escape.MenuItems.ItemData;
 import flixel.FlxG;
 import flixel.FlxState;
 
 class MenuState extends FlxState {
   override public function create() {
-    var text = new flixel.text.FlxText(0, 0, 0, "start", 32);
+    var menuItems = new MenuItems(10, [
+      "start" => { action: name -> FlxG.switchState(new PlayState()) },
+      "exit" => { action: name -> Sys.exit(0) }
+    ]);
 
-    text.screenCenter();
-
-    add(text);
+    add(menuItems);
 
     super.create();
-  }
-
-  override function update(elapsed: Float) {
-    super.update(elapsed);
   }
 }
