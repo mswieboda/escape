@@ -2,7 +2,6 @@ package escape;
 
 import flixel.group.FlxGroup;
 import flixel.text.FlxText;
-import flixel.ui.FlxButton;
 
 class GameOverMenu extends FlxGroup {
   static inline var FONT_SIZE = 32;
