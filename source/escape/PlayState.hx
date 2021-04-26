@@ -10,7 +10,7 @@ class PlayState extends FlxState {
   override public function create() {
     player = new Player(50, 10);
 
-    level = new Level(player, AssetPaths.level__txt, AssetPaths.tiles__png);
+    level = new Level(player, AssetPaths.level__dat, AssetPaths.tiles__png);
 
     add(level);
     add(player.actionMessage);

@@ -10,11 +10,7 @@ class GameOverMenu extends PlayMenu {
     var parentPersistentUpdate = true;
     var itemData = [
       { name: "restart", action: name -> FlxG.switchState(new PlayState()) },
-#if web
-      { name: "exit" }
-#else
-      { name: "exit", action: name -> Sys.exit(0) }
-#end
+      { name: "exit", action: name -> FlxG.switchState(new MenuState()) }
     ];
 
     super(title, itemData, parentPersistentUpdate);
