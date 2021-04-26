@@ -65,6 +65,7 @@ class Level extends FlxGroup {
     add(leftWallJumpTriggers);
     add(rightWallJumpTriggers);
     add(player);
+    add(player.feetTrigger);
     add(spikes);
   }
 
@@ -79,8 +80,8 @@ class Level extends FlxGroup {
     FlxG.collide(player, spikes, Player.onHitSpikes);
     FlxG.overlap(player, doorTriggers, Player.onDoorTrigger, Door.onDoorTrigger);
     FlxG.overlap(player, ladderTriggers, Player.onLadderTrigger);
-    FlxG.overlap(player, leftWallJumpTriggers, Player.onLeftWallJumpTrigger);
-    FlxG.overlap(player, rightWallJumpTriggers, Player.onRightWallJumpTrigger);
+    FlxG.overlap(player.feetTrigger, leftWallJumpTriggers, player.onLeftWallJumpTrigger);
+    FlxG.overlap(player.feetTrigger, rightWallJumpTriggers, player.onRightWallJumpTrigger);
   }
 
   static function parseCSV(csv: String): Array<Array<String>> {

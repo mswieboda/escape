@@ -20,8 +20,10 @@ class Player extends FlxSprite {
   static inline var MAX_VELOCITY_X = 160;
   static inline var MAX_VELOCITY_Y = 640;
   static inline var WALK_FPS = 12;
+  static inline var FEET_TRIGGER_HEIGHT = 16;
 
   public var actionMessage: ActionMessage;
+  public var feetTrigger: Trigger;
 
   var climbing = false;
   var walkRightFoot = false;
@@ -42,6 +44,13 @@ class Player extends FlxSprite {
     maxVelocity.set(MAX_VELOCITY_X, MAX_VELOCITY_Y);
 
     actionMessage = new ActionMessage();
+
+    feetTrigger = new Trigger(
+      x,
+      y + height - FEET_TRIGGER_HEIGHT,
+      width,
+      FEET_TRIGGER_HEIGHT
+    );
   }
 
   override public function update(elapsed: Float) {
@@ -96,6 +105,9 @@ class Player extends FlxSprite {
         animateWalk();
       }
     }
+
+    // lock feetTrigger to player position
+    feetTrigger.setPosition(x, y + height - FEET_TRIGGER_HEIGHT);
   }
 
   public function updateBeforeCollisionChecks(elapsed: Float) {
@@ -140,18 +152,16 @@ class Player extends FlxSprite {
     climbing = true;
   }
 
-  public static function onLeftWallJumpTrigger(player: Player, trigger: Trigger) {
-    player.wallJumpTrigger(trigger, true);
+  public function onLeftWallJumpTrigger(feetTrigger: Trigger, trigger: Trigger) {
+    actionMessage.show("LEFT to wall jump");
+
+    canWallJump = FlxG.keys.anyPressed([LEFT, A]);
   }
 
-  public static function onRightWallJumpTrigger(player: Player, trigger: Trigger) {
-    player.wallJumpTrigger(trigger, false);
-  }
+  public function onRightWallJumpTrigger(feetTrigger: Trigger, trigger: Trigger) {
+    actionMessage.show("RIGHT to wall jump");
 
-  function wallJumpTrigger(trigger: Trigger, left: Bool) {
-    actionMessage.show("LEFT/RIGHT to wall jump");
-
-    canWallJump = FlxG.keys.anyPressed(left ? [LEFT, A] : [RIGHT, D]);
+    canWallJump = FlxG.keys.anyPressed([RIGHT, D]);
   }
 
   function animateWalk() {
