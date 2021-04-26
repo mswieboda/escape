@@ -76,15 +76,12 @@ class Level extends FlxGroup {
 
     player.updateBeforeCollisionChecks(elapsed);
 
-    // TODO: switch these around, saw this comment from a Flixel example:
-    // IMPORTANT: Always collide the map with objects, not the other way around.
-    //        This prevents odd collision errors (collision separation code off by 1 px).
-    FlxG.collide(player, colliders);
-    FlxG.collide(player, spikes, Player.onHitSpikes);
-    FlxG.overlap(player, doorTriggers, Player.onDoorTrigger, Door.onDoorTrigger);
-    FlxG.overlap(player, ladderTriggers, Player.onLadderTrigger);
-    FlxG.overlap(player.feetTrigger, leftWallJumpTriggers, player.onLeftWallJumpTrigger);
-    FlxG.overlap(player.feetTrigger, rightWallJumpTriggers, player.onRightWallJumpTrigger);
+    FlxG.collide(colliders, player);
+    FlxG.collide(spikes, player, Player.onHitSpikes);
+    FlxG.overlap(doorTriggers, player, Player.onDoorTrigger, Door.onDoorTrigger);
+    FlxG.overlap(ladderTriggers, player, Player.onLadderTrigger);
+    FlxG.overlap(leftWallJumpTriggers, player.feetTrigger, player.onLeftWallJumpTrigger);
+    FlxG.overlap(rightWallJumpTriggers, player.feetTrigger, player.onRightWallJumpTrigger);
   }
 
   static function parseCSV(csv: String): Array<Array<String>> {

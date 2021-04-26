@@ -215,7 +215,7 @@ class Player extends FlxSprite {
     kill();
   }
 
-  public static function onDoorTrigger(player: Player, trigger: DoorTrigger) {
+  public static function onDoorTrigger(trigger: DoorTrigger, player: Player) {
     player.doorTrigger(trigger);
   }
 
@@ -230,7 +230,7 @@ class Player extends FlxSprite {
     }
   }
 
-  public static function onLadderTrigger(player: Player, trigger: LadderTrigger) {
+  public static function onLadderTrigger(trigger: LadderTrigger, player: Player) {
     player.ladderTrigger(trigger);
   }
 
@@ -240,7 +240,7 @@ class Player extends FlxSprite {
     climbing = true;
   }
 
-  public function onLeftWallJumpTrigger(feetTrigger: Trigger, trigger: Trigger) {
+  public function onLeftWallJumpTrigger(trigger: Trigger, feetTrigger: Trigger) {
     // TODO: have actionMessage come from actions gamepad/keyboard etc somehow
     actionMessage.show("hold [left] then press [jump] to wall jump");
 
@@ -252,7 +252,7 @@ class Player extends FlxSprite {
     }
   }
 
-  public function onRightWallJumpTrigger(feetTrigger: Trigger, trigger: Trigger) {
+  public function onRightWallJumpTrigger(trigger: Trigger, feetTrigger: Trigger) {
     // TODO: have actionMessage come from actions gamepad/keyboard etc somehow
     actionMessage.show("hold [right] then press [jump] to wall jump");
 
