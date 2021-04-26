@@ -55,26 +55,22 @@ class Door extends FlxGroup {
   }
 
   public function unlock() {
-    trace(">>> Door unlocking");
     animating = true;
     sprite.animation.play("up");
   }
 
   public function lock() {
-    trace(">>> Door locking");
     animating = true;
     sprite.animation.play("down");
   }
 
   function setLocked() {
-    trace(">>> Door locked!");
     animating = false;
     locked = true;
     sprite.solid = true;
   }
 
   function setUnlocked() {
-    trace(">>> Door unlocked!");
     animating = false;
     locked = false;
     sprite.solid = false;

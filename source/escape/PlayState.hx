@@ -24,6 +24,8 @@ class PlayState extends FlxState {
     FlxG.mouse.visible = false;
     FlxG.mouse.enabled = false;
     FlxG.mouse.useSystemCursor = false;
+
+    Action.addInputs();
   }
 
   override function update(elapsed: Float) {

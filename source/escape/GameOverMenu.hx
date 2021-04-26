@@ -24,7 +24,6 @@ class GameOverMenu extends FlxGroup {
   }
 
   public function show() {
-    trace("game over!");
     text.text = "Game Over!";
     text.screenCenter();
     visible = true;

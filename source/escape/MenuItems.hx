@@ -34,13 +34,13 @@ class MenuItems extends FlxTypedGroup<MenuItem> {
   }
 
   override function update(elapsed: Float) {
-    if (FlxG.keys.anyJustPressed([DOWN, S])) {
+    if (Action.menuDown.triggered) {
       members[selectedIndex].setSelected(false);
 
       selectedIndex = selectedIndex + 1 >= members.length ? 0 : selectedIndex + 1;
 
       members[selectedIndex].setSelected(true);
-    } else if (FlxG.keys.anyJustPressed([UP, W])) {
+    } else if (Action.menuUp.triggered) {
       members[selectedIndex].setSelected(false);
 
       selectedIndex = selectedIndex - 1 < 0 ? members.length - 1 : selectedIndex - 1;
@@ -52,7 +52,7 @@ class MenuItems extends FlxTypedGroup<MenuItem> {
   }
 
   function actionCondition(name: String) {
-    return FlxG.keys.anyJustPressed([ENTER, SPACE, SHIFT]);
+    return Action.menuAction.triggered;
   }
 }
 

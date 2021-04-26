@@ -3,9 +3,6 @@ package escape;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.input.actions.FlxAction.FlxActionAnalog;
-import flixel.input.actions.FlxAction.FlxActionDigital;
-import flixel.input.actions.FlxActionManager;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxTimer;
@@ -33,15 +30,6 @@ class Player extends FlxSprite {
   static inline var IDLE_TIME = 0.5;
 
   static inline var FEET_TRIGGER_HEIGHT = 16;
-
-  static var actions: FlxActionManager;
-
-  var up: FlxActionDigital;
-  var down: FlxActionDigital;
-  var left: FlxActionDigital;
-  var right: FlxActionDigital;
-  var jump: FlxActionDigital;
-  var action: FlxActionDigital;
 
   public var actionMessage: ActionMessage;
   public var feetTrigger: Trigger;
@@ -79,50 +67,6 @@ class Player extends FlxSprite {
 
     idleTimer = new FlxTimer();
     idleTimer.start(IDLE_TIME);
-
-    addInputs();
-  }
-
-  function addInputs() {
-    // actions
-    up = new FlxActionDigital();
-    down = new FlxActionDigital();
-    left = new FlxActionDigital();
-    right = new FlxActionDigital();
-    jump = new FlxActionDigital();
-    action = new FlxActionDigital();
-
-    if (actions == null) actions = FlxG.inputs.add(new FlxActionManager());
-
-    actions.addActions([up, down, left, right, jump]);
-
-    // Add keyboard inputs
-    up.addKey(UP, PRESSED);
-    up.addKey(W, PRESSED);
-    down.addKey(DOWN, PRESSED);
-    down.addKey(S, PRESSED);
-    left.addKey(LEFT, PRESSED);
-    left.addKey(A, PRESSED);
-    right.addKey(RIGHT, PRESSED);
-    right.addKey(D, PRESSED);
-    jump.addKey(UP, JUST_PRESSED);
-    jump.addKey(W, JUST_PRESSED);
-    jump.addKey(SPACE, JUST_PRESSED);
-    action.addKey(ENTER, JUST_PRESSED);
-
-    // Add gamepad DPAD inputs
-    up.addGamepad(DPAD_UP, PRESSED);
-    down.addGamepad(DPAD_DOWN, PRESSED);
-    left.addGamepad(DPAD_LEFT, PRESSED);
-    right.addGamepad(DPAD_RIGHT, PRESSED);
-    jump.addGamepad(A, JUST_PRESSED);
-    action.addKey(X, JUST_PRESSED);
-
-    // Add gamepad analog stick (as simulated DPAD) inputs
-    up.addGamepad(LEFT_STICK_DIGITAL_UP, PRESSED);
-    down.addGamepad(LEFT_STICK_DIGITAL_DOWN, PRESSED);
-    left.addGamepad(LEFT_STICK_DIGITAL_LEFT, PRESSED);
-    right.addGamepad(LEFT_STICK_DIGITAL_RIGHT, PRESSED);
   }
 
   override public function update(elapsed: Float) {
@@ -132,14 +76,15 @@ class Player extends FlxSprite {
   }
 
   function updateMovement() {
-    var left = this.left.triggered;
-    var right = this.right.triggered;
-    var down = this.down.triggered;
-    var up = this.up.triggered;
-    var jump = this.jump.triggered;
+    var left = Action.left.triggered;
+    var right = Action.right.triggered;
+    var down = Action.down.triggered;
+    var up = Action.up.triggered;
+    var jump = Action.jump.triggered;
 
-    // if (left && right) left = right = false;
-    // if (down && up) up = down = false;
+    // TODO: put this back in, test
+    if (left && right) left = right = false;
+    if (down && up) up = down = false;
 
     acceleration.x = 0;
     acceleration.y = climbing ? 0 : GRAVITY;
@@ -225,7 +170,7 @@ class Player extends FlxSprite {
 
     var door = trigger.door;
 
-    if (door.locked && action.triggered) {
+    if (door.locked && Action.action.triggered) {
       door.unlock();
     }
   }
@@ -244,7 +189,7 @@ class Player extends FlxSprite {
     // TODO: have actionMessage come from actions gamepad/keyboard etc somehow
     actionMessage.show("hold [left] then press [jump] to wall jump");
 
-    if (!canWallJump && left.triggered) {
+    if (!canWallJump && Action.left.triggered) {
       canWallJump = true;
       facing = FlxObject.LEFT;
       animation.play("wallJump");
@@ -257,7 +202,7 @@ class Player extends FlxSprite {
     actionMessage.show("hold [right] then press [jump] to wall jump");
 
     // TODO: switch to actions
-    if (!canWallJump && right.triggered) {
+    if (!canWallJump && Action.right.triggered) {
       canWallJump = true;
       facing = FlxObject.RIGHT;
       animation.play("wallJump");

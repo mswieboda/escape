@@ -36,5 +36,7 @@ class MenuState extends FlxState {
     add(menuItems);
 
     super.create();
+
+    Action.addInputs();
   }
 }
