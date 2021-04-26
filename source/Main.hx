@@ -12,7 +12,11 @@ class Main extends Sprite {
   public function new() {
     super();
 
+#if web
+    var env = "";
+#else
     var env = Sys.getEnv("ENV");
+#end
     env = env != null ? env.toUpperCase() : env;
 
     var state: Class<FlxState> = env == TEST ? PlayState : MenuState;

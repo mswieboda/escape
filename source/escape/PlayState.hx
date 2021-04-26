@@ -19,6 +19,11 @@ class PlayState extends FlxState {
     add(gameOverMenu);
 
     super.create();
+
+    // TODO: why are none of these working? move where they need to be
+    FlxG.mouse.visible = false;
+    FlxG.mouse.enabled = false;
+    FlxG.mouse.useSystemCursor = false;
   }
 
   override function update(elapsed: Float) {

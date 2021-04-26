@@ -25,7 +25,11 @@ class MenuState extends FlxState {
 
     var menuItems = new MenuItems(title.y + title.height + PADDING, [
       "start" => { action: name -> FlxG.switchState(new PlayState()) },
+#if web
+      "exit" => {}
+#else
       "exit" => { action: name -> Sys.exit(0) }
+#end
     ]);
 
     add(title);
