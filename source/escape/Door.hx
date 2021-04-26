@@ -76,7 +76,7 @@ class Door extends FlxGroup {
     sprite.solid = false;
   }
 
-  public static function onDoorTrigger(player: Player, trigger: DoorTrigger): Bool {
+  public static function onDoorTrigger(trigger: DoorTrigger, player: Player): Bool {
     return trigger.door.locked;
   }
 }
