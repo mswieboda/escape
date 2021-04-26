@@ -13,21 +13,17 @@ class MenuItems extends FlxTypedGroup<MenuItem> {
   var selectedIndex = 0;
 
   // TODO: make names a map, key of names, and holds action functions
-  public function new(y: Float, itemMap: Map<String, ItemData>) {
+  public function new(y: Float, itemMap: Array<ItemData>) {
     super();
 
-    var index = 0;
-
-    for (key => data in itemMap) {
-      var item = new MenuItem(0, key);
+    for (index => data in itemMap) {
+      var item = new MenuItem(0, data.name);
 
       item.y = y + index * (item.height + PADDING);
       item.actionCondition = data.actionCondition != null ? data.actionCondition : actionCondition;
       item.action = data.action;
 
       add(item);
-
-      index++;
     }
 
     members[selectedIndex].setSelected(true);
@@ -57,6 +53,7 @@ class MenuItems extends FlxTypedGroup<MenuItem> {
 }
 
 typedef ItemData = {
+  name: String,
   ?actionCondition: (name: String) -> Bool,
   ?action: (name: String) -> Void
 }
