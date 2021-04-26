@@ -76,6 +76,9 @@ class Level extends FlxGroup {
 
     player.updateBeforeCollisionChecks(elapsed);
 
+    // TODO: switch these around, saw this comment from a Flixel example:
+    // IMPORTANT: Always collide the map with objects, not the other way around.
+    //        This prevents odd collision errors (collision separation code off by 1 px).
     FlxG.collide(player, colliders);
     FlxG.collide(player, spikes, Player.onHitSpikes);
     FlxG.overlap(player, doorTriggers, Player.onDoorTrigger, Door.onDoorTrigger);
