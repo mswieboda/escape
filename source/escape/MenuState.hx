@@ -24,8 +24,7 @@ class MenuState extends FlxState {
     title.screenCenter(FlxAxes.X);
 
     var menuItems = new MenuItems(title.y + title.height + PADDING, [
-      // { name: "start", action: name -> FlxG.switchState(new PlayState()) },
-      { name: "start", action: name -> trace('>>> WHEWWW we pressed start!!!') },
+      { name: "start", action: name -> FlxG.switchState(new PlayState()) },
 #if web
       { name: "exit" }
 #else
