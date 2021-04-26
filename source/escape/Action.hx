@@ -14,6 +14,7 @@ class Action {
   public static var right: FlxActionDigital;
   public static var jump: FlxActionDigital;
   public static var action: FlxActionDigital;
+  public static var menu: FlxActionDigital;
 
   public static var menuUp: FlxActionDigital;
   public static var menuDown: FlxActionDigital;
@@ -28,6 +29,7 @@ class Action {
     right = new FlxActionDigital();
     jump = new FlxActionDigital();
     action = new FlxActionDigital();
+    menu = new FlxActionDigital();
 
     menuUp = new FlxActionDigital();
     menuDown = new FlxActionDigital();
@@ -36,7 +38,19 @@ class Action {
 
     if (actions == null) actions = FlxG.inputs.add(new FlxActionManager());
 
-    actions.addActions([up, down, left, right, jump, action, menuUp, menuDown, menuAction, menuCancel]);
+    actions.addActions([
+      up,
+      down,
+      left,
+      right,
+      jump,
+      action,
+      menu,
+      menuUp,
+      menuDown,
+      menuAction,
+      menuCancel
+    ]);
 
     // ACTIONS
     // Add keyboard inputs
@@ -52,6 +66,8 @@ class Action {
     jump.addKey(W, JUST_PRESSED);
     jump.addKey(SPACE, JUST_PRESSED);
     action.addKey(ENTER, JUST_PRESSED);
+    menu.addKey(ESCAPE, JUST_PRESSED);
+    menu.addKey(BACKSPACE, JUST_PRESSED);
 
     // Add gamepad DPAD inputs
     up.addGamepad(DPAD_UP, PRESSED);
@@ -60,6 +76,8 @@ class Action {
     right.addGamepad(DPAD_RIGHT, PRESSED);
     jump.addGamepad(A, JUST_PRESSED);
     action.addGamepad(X, JUST_PRESSED);
+    menu.addGamepad(START, JUST_PRESSED);
+    menu.addGamepad(BACK, JUST_PRESSED);
 
     // Add gamepad analog stick (as simulated DPAD) inputs
     up.addGamepad(LEFT_STICK_DIGITAL_UP, PRESSED);
@@ -86,7 +104,9 @@ class Action {
     menuUp.addGamepad(DPAD_UP, JUST_PRESSED);
     menuDown.addGamepad(DPAD_DOWN, JUST_PRESSED);
     menuAction.addGamepad(A, JUST_PRESSED);
+    menuAction.addGamepad(START, JUST_PRESSED);
     menuCancel.addGamepad(B, JUST_PRESSED);
+    menuCancel.addGamepad(BACK, JUST_PRESSED);
 
     // Add gamepad analog stick (as simulated DPAD) inputs
     menuUp.addGamepad(LEFT_STICK_DIGITAL_UP, JUST_PRESSED);

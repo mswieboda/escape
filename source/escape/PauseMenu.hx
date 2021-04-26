@@ -4,11 +4,11 @@ import flixel.FlxG;
 import flixel.FlxSubState;
 import flixel.text.FlxText;
 
-class GameOverMenu extends PlayMenu {
+class PauseMenu extends PlayMenu {
   public function new() {
-    var title = "Game Over!";
-    var persistentUpdate = true;
+    var title = "Paused!";
     var itemData = [
+      { name: "resume", action: name -> close() },
       { name: "restart", action: name -> FlxG.switchState(new PlayState()) },
 #if web
       { name: "exit" }
@@ -17,6 +17,6 @@ class GameOverMenu extends PlayMenu {
 #end
     ];
 
-    super(title, itemData, persistentUpdate);
+    super(title, itemData);
   }
 }

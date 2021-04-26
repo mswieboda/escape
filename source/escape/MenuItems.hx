@@ -13,10 +13,10 @@ class MenuItems extends FlxTypedGroup<MenuItem> {
   var selectedIndex = 0;
 
   // TODO: make names a map, key of names, and holds action functions
-  public function new(y: Float, itemMap: Array<ItemData>) {
+  public function new(y: Float, itemData: Array<ItemData>) {
     super();
 
-    for (index => data in itemMap) {
+    for (index => data in itemData) {
       var item = new MenuItem(0, data.name);
 
       item.scrollFactor.set(0, 0);
