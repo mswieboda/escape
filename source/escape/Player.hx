@@ -10,6 +10,7 @@ class Player extends FlxSprite {
   static inline var WIDTH = 24;
   static inline var HEIGHT = 48;
   static inline var MOVEMENT_ACCELERATION = 640;
+  static inline var JUMP_X_MOVEMENT_ACCELERATION = 192;
   static inline var JUMP_SPEED = 256;
   static inline var WALL_JUMP_X_SPEED = 320;
   static inline var WALL_JUMP_Y_SPEED = 192;
@@ -63,12 +64,6 @@ class Player extends FlxSprite {
     acceleration.x = 0;
     acceleration.y = climbing ? 0 : GRAVITY;
 
-    if (left) {
-      facing = LEFT;
-    } else if (right) {
-      facing = RIGHT;
-    }
-
     if (up || down) {
       if (climbing) {
         velocity.y = down ? LADDER_SPEED : -LADDER_SPEED;
@@ -84,14 +79,18 @@ class Player extends FlxSprite {
           facing = left ? RIGHT : LEFT;
 
           animation.pause();
+        } else if (left || right) {
+          acceleration.x += left ? -JUMP_X_MOVEMENT_ACCELERATION : JUMP_X_MOVEMENT_ACCELERATION;
         }
       }
     } else {
       if (left) {
+        if (velocity.y == 0 || climbing) facing = LEFT;
         acceleration.x -= MOVEMENT_ACCELERATION;
 
         animateWalk();
       } else if (right) {
+        if (velocity.y == 0 || climbing) facing = RIGHT;
         acceleration.x += MOVEMENT_ACCELERATION;
 
         animateWalk();

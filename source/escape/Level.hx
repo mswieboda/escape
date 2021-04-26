@@ -281,6 +281,12 @@ class Level extends FlxGroup {
     var nextColTile = getTile(levelStrData, row, col + 1);
 
     if (prevColTile == '0') {
+      if (getTile(levelStrData, row, col - 2) == '1') return;
+
+      var prevCorners = [getTile(levelStrData, row - 1, col - 1), getTile(levelStrData, row + 1, col - 1)];
+
+      if (prevCorners.contains('1')) return;
+
       var trigger = new Trigger(
         col * TILE_WIDTH - WALL_TRIGGER_WIDTH / 2,
         row * TILE_HEIGHT,
@@ -292,6 +298,12 @@ class Level extends FlxGroup {
     }
 
     if (nextColTile == '0') {
+      if (getTile(levelStrData, row, col + 2) == '1') return;
+
+      var nextCorners = [getTile(levelStrData, row - 1, col + 1), getTile(levelStrData, row + 1, col + 1)];
+
+      if (nextCorners.contains('1')) return;
+
       var trigger = new Trigger(
         col * TILE_WIDTH + TILE_WIDTH - WALL_TRIGGER_WIDTH / 2,
         row * TILE_HEIGHT,
