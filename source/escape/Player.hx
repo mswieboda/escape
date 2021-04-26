@@ -10,8 +10,9 @@ class Player extends FlxSprite {
   static inline var WIDTH = 24;
   static inline var HEIGHT = 48;
   static inline var MOVEMENT_ACCELERATION = 640;
-  static inline var JUMP_SPEED = 320;
-  static inline var WALL_JUMP_SPEED = 160;
+  static inline var JUMP_SPEED = 256;
+  static inline var WALL_JUMP_X_SPEED = 320;
+  static inline var WALL_JUMP_Y_SPEED = 192;
   static inline var LADDER_SPEED = 160;
   static inline var DRAG: Int = 640;
   static inline var GRAVITY = 640;
@@ -77,8 +78,10 @@ class Player extends FlxSprite {
 
           animation.pause();
         } else if (canWallJump && (left || right)) {
-          velocity.y = -WALL_JUMP_SPEED;
-          velocity.x = left ? WALL_JUMP_SPEED : -WALL_JUMP_SPEED;
+          velocity.x = left ? WALL_JUMP_X_SPEED : -WALL_JUMP_X_SPEED;
+          velocity.y = -WALL_JUMP_Y_SPEED;
+
+          facing = left ? RIGHT : LEFT;
 
           animation.pause();
         }
@@ -98,6 +101,7 @@ class Player extends FlxSprite {
 
   public function updateBeforeCollisionChecks(elapsed: Float) {
     climbing = false;
+    canWallJump = false;
     acceleration.y = GRAVITY;
 
     actionMessage.hide();
