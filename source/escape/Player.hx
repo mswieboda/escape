@@ -35,6 +35,7 @@ class Player extends FlxSprite {
     loadGraphic(AssetPaths.player__png, true, WIDTH, HEIGHT);
     animation.add("walkRightFoot", [1, 2, 1, 0], WALK_FPS, false);
     animation.add("walkLeftFoot", [3, 4, 3, 0], WALK_FPS, false);
+    animation.add("wallJump", [5], 0, false);
 
     setFacingFlip(LEFT, true, false);
     setFacingFlip(RIGHT, false, false);
@@ -153,15 +154,23 @@ class Player extends FlxSprite {
   }
 
   public function onLeftWallJumpTrigger(feetTrigger: Trigger, trigger: Trigger) {
-    actionMessage.show("LEFT to wall jump");
+    actionMessage.show("hold LEFT then press UP to wall jump");
 
-    canWallJump = FlxG.keys.anyPressed([LEFT, A]);
+    if (FlxG.keys.anyPressed([LEFT, A])) {
+      canWallJump = true;
+      facing = LEFT;
+      animation.play("wallJump");
+    }
   }
 
   public function onRightWallJumpTrigger(feetTrigger: Trigger, trigger: Trigger) {
-    actionMessage.show("RIGHT to wall jump");
+    actionMessage.show("hold RIGHT then press UP to wall jump");
 
-    canWallJump = FlxG.keys.anyPressed([RIGHT, D]);
+    if (FlxG.keys.anyPressed([RIGHT, D])) {
+      canWallJump = true;
+      facing = RIGHT;
+      animation.play("wallJump");
+    }
   }
 
   function animateWalk() {
