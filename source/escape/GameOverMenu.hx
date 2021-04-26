@@ -1,10 +1,12 @@
 package escape;
 
+import flixel.FlxG;
 import flixel.group.FlxGroup;
 import flixel.text.FlxText;
 
 class GameOverMenu extends FlxGroup {
   static inline var FONT_SIZE = 32;
+  static inline var PADDING = 16;
 
   var text: FlxText;
 
@@ -21,6 +23,17 @@ class GameOverMenu extends FlxGroup {
     text.screenCenter();
 
     add(text);
+
+    var menuItems = new MenuItems(text.y + text.height + PADDING, [
+      { name: "restart", action: name -> FlxG.switchState(new PlayState()) },
+#if web
+      { name: "exit" }
+#else
+      { name: "exit", action: name -> Sys.exit(0) }
+#end
+    ]);
+
+    add(menuItems);
   }
 
   public function show() {
