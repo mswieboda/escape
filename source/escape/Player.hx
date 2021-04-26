@@ -5,10 +5,14 @@ import flixel.FlxSprite;
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
+import flixel.util.FlxTimer;
 
 class Player extends FlxSprite {
+  // size
   static inline var WIDTH = 24;
   static inline var HEIGHT = 48;
+
+  // movement
   static inline var MOVEMENT_ACCELERATION = 640;
   static inline var JUMP_X_MOVEMENT_ACCELERATION = 192;
   static inline var JUMP_SPEED = 256;
@@ -19,7 +23,12 @@ class Player extends FlxSprite {
   static inline var GRAVITY = 640;
   static inline var MAX_VELOCITY_X = 160;
   static inline var MAX_VELOCITY_Y = 640;
+
+  // animation
   static inline var WALK_FPS = 12;
+  static inline var IDLE_FPS = 12;
+  static inline var IDLE_TIME = 0.5;
+
   static inline var FEET_TRIGGER_HEIGHT = 16;
 
   public var actionMessage: ActionMessage;
@@ -28,6 +37,7 @@ class Player extends FlxSprite {
   var climbing = false;
   var walkRightFoot = false;
   var canWallJump = false;
+  var idleTimer: FlxTimer;
 
   public function new(x: Float, y: Float) {
     super(x, y);
@@ -35,7 +45,9 @@ class Player extends FlxSprite {
     loadGraphic(AssetPaths.player__png, true, WIDTH, HEIGHT);
     animation.add("walkRightFoot", [1, 2, 1, 0], WALK_FPS, false);
     animation.add("walkLeftFoot", [3, 4, 3, 0], WALK_FPS, false);
-    animation.add("wallJump", [5], 0, false);
+    animation.add("wallJump", [5, 3, 4], WALK_FPS, false);
+    animation.add("idleJump", [1, 2], WALK_FPS, false);
+    animation.add("idle", [6, 0], IDLE_FPS, false);
 
     setFacingFlip(LEFT, true, false);
     setFacingFlip(RIGHT, false, false);
@@ -52,6 +64,9 @@ class Player extends FlxSprite {
       width,
       FEET_TRIGGER_HEIGHT
     );
+
+    idleTimer = new FlxTimer();
+    idleTimer.start(IDLE_TIME);
   }
 
   override public function update(elapsed: Float) {
@@ -88,7 +103,7 @@ class Player extends FlxSprite {
 
           facing = left ? RIGHT : LEFT;
 
-          animation.pause();
+          animation.resume();
         } else if (left || right) {
           acceleration.x += left ? -JUMP_X_MOVEMENT_ACCELERATION : JUMP_X_MOVEMENT_ACCELERATION;
         }
@@ -104,6 +119,19 @@ class Player extends FlxSprite {
         acceleration.x += MOVEMENT_ACCELERATION;
 
         animateWalk();
+      } else {
+        // idle animation and delay
+        if (velocity.y == 0) {
+          if (animation.name != "idle" || animation.finished) {
+            animation.play("idle");
+            animation.pause();
+            idleTimer.reset(IDLE_TIME);
+          } else if (animation.paused && idleTimer.finished) {
+            animation.play("idle");
+          }
+        } else if (animation.name != "idleJump") {
+          animation.play("idleJump");
+        }
       }
     }
 
@@ -156,27 +184,29 @@ class Player extends FlxSprite {
   public function onLeftWallJumpTrigger(feetTrigger: Trigger, trigger: Trigger) {
     actionMessage.show("hold LEFT then press UP to wall jump");
 
-    if (FlxG.keys.anyPressed([LEFT, A])) {
+    if (!canWallJump && FlxG.keys.anyPressed([LEFT, A])) {
       canWallJump = true;
       facing = LEFT;
       animation.play("wallJump");
+      animation.pause();
     }
   }
 
   public function onRightWallJumpTrigger(feetTrigger: Trigger, trigger: Trigger) {
     actionMessage.show("hold RIGHT then press UP to wall jump");
 
-    if (FlxG.keys.anyPressed([RIGHT, D])) {
+    if (!canWallJump && FlxG.keys.anyPressed([RIGHT, D])) {
       canWallJump = true;
       facing = RIGHT;
       animation.play("wallJump");
+      animation.pause();
     }
   }
 
   function animateWalk() {
     if (velocity.y != 0) return;
 
-    if (animation.finished) {
+    if ((animation.name != "walkLeftFoot" && animation.name != "walkRightFoot") || animation.finished) {
       if (walkRightFoot) {
           walkRightFoot = false;
           animation.play("walkLeftFoot");
