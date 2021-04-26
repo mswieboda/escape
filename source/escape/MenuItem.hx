@@ -10,7 +10,8 @@ import flixel.util.FlxColor;
 class MenuItem extends FlxText {
   static inline var FONT_SIZE = 32;
   static inline var TEXT_COLOR = 0xFF00CC00;
-  static inline var BORDER_SELECTED_COLOR = 0xFF00FF00;
+  static inline var BORDER_SELECTED_SIZE = 4;
+  static inline var BORDER_SELECTED_COLOR = 0xFF006600;
 
   public var name: String;
   public var selected: Bool = false;
@@ -24,6 +25,7 @@ class MenuItem extends FlxText {
     this.name = name;
 
     color = TEXT_COLOR;
+    borderSize = BORDER_SELECTED_SIZE;
     borderStyle = FlxTextBorderStyle.SHADOW;
     screenCenter(FlxAxes.X);
   }

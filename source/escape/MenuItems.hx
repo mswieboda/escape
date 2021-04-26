@@ -21,7 +21,7 @@ class MenuItems extends FlxTypedGroup<MenuItem> {
     for (key => data in itemMap) {
       var item = new MenuItem(0, key);
 
-      item.y = index * (item.height + PADDING);
+      item.y = y + index * (item.height + PADDING);
       item.actionCondition = data.actionCondition != null ? data.actionCondition : actionCondition;
       item.action = data.action;
 
