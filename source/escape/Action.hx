@@ -37,8 +37,6 @@ class Action {
     if (actions == null) actions = FlxG.inputs.add(new FlxActionManager());
 
     actions.addActions([up, down, left, right, jump, action, menuUp, menuDown, menuAction, menuCancel]);
-    actions.resetOnStateSwitch = NONE;
-    // FlxG.inputs.resetOnStateSwitch = true;
 
     // ACTIONS
     // Add keyboard inputs

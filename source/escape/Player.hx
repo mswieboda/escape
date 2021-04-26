@@ -38,6 +38,7 @@ class Player extends FlxSprite {
   var walkRightFoot = false;
   var canWallJump = false;
   var idleTimer: FlxTimer;
+  var firstFrame = true;
 
   public function new(x: Float, y: Float) {
     super(x, y);
@@ -76,6 +77,11 @@ class Player extends FlxSprite {
   }
 
   function updateMovement() {
+    if (firstFrame) {
+      firstFrame = false;
+      return;
+    }
+    
     var left = Action.left.triggered;
     var right = Action.right.triggered;
     var down = Action.down.triggered;
@@ -149,7 +155,7 @@ class Player extends FlxSprite {
     actionMessage.hide();
   }
 
-  public static function onHitSpikes(player: Player, spike: Spike) {
+  public static function onHitSpikes(spike: Spike, player: Player) {
     player.hitSpike(spike);
   }
 
