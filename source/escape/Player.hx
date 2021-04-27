@@ -8,9 +8,10 @@ import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxTimer;
 
 class Player extends FlxSprite {
-  // size
-  static inline var WIDTH = 24;
-  static inline var HEIGHT = 48;
+  // size, position
+  public static inline var WIDTH = 24;
+  public static inline var HEIGHT = 48;
+  public static inline var TILE = 'P';
 
   // movement
   static inline var MOVEMENT_ACCELERATION = 640;
@@ -27,7 +28,7 @@ class Player extends FlxSprite {
   // animation
   static inline var WALK_FPS = 12;
   static inline var IDLE_FPS = 12;
-  static inline var IDLE_TIME = 0.5;
+  static inline var IDLE_TIME = 0.75;
 
   static inline var FEET_TRIGGER_HEIGHT = 16;
 
@@ -40,15 +41,15 @@ class Player extends FlxSprite {
   var idleTimer: FlxTimer;
   var firstFrame = true;
 
-  public function new(x: Float, y: Float) {
-    super(x, y);
+  public function new() {
+    super();
 
     loadGraphic(AssetPaths.player__png, true, WIDTH, HEIGHT);
     animation.add("walkRightFoot", [1, 2, 1, 0], WALK_FPS, false);
     animation.add("walkLeftFoot", [3, 4, 3, 0], WALK_FPS, false);
     animation.add("wallJump", [5, 3, 4], WALK_FPS, false);
     animation.add("idleJump", [1, 2], WALK_FPS, false);
-    animation.add("idle", [6, 0], IDLE_FPS, false);
+    animation.add("idle", [0, 6], IDLE_FPS, false);
 
     setFacingFlip(FlxObject.LEFT, true, false);
     setFacingFlip(FlxObject.RIGHT, false, false);
@@ -81,7 +82,7 @@ class Player extends FlxSprite {
       firstFrame = false;
       return;
     }
-    
+
     var left = Action.left.triggered;
     var right = Action.right.triggered;
     var down = Action.down.triggered;
@@ -112,6 +113,8 @@ class Player extends FlxSprite {
 
         animation.resume();
       }
+
+      playSound("jump", 0.5);
     }
 
     if (velocity.y == 0) {
@@ -133,6 +136,8 @@ class Player extends FlxSprite {
           idleTimer.reset(IDLE_TIME);
         } else if (animation.paused && idleTimer.finished) {
           animation.play("idle");
+
+          playSound("breath");
         }
       }
     } else {
@@ -230,5 +235,14 @@ class Player extends FlxSprite {
     } else {
       animation.resume();
     }
+  }
+
+  function playSound(asset: String, volume: Float = 1) {
+    var ext = "ogg";
+#if web
+    ext = "mp3";
+#end
+
+    FlxG.sound.play('assets/sounds/${asset}.${ext}', volume);
   }
 }

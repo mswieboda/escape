@@ -39,9 +39,20 @@ class MenuItem extends FlxText {
   public function setSelected(selected: Bool) {
     borderColor = selected ? BORDER_SELECTED_COLOR : FlxColor.TRANSPARENT;
     this.selected = selected;
+
+    if (selected) playSound("blip", 0.69);
   }
 
   public function fireAction() {
     if (action != null) action(name);
+  }
+
+  function playSound(asset: String, volume: Float = 1) {
+    var ext = "ogg";
+#if web
+    ext = "mp3";
+#end
+
+    FlxG.sound.play('assets/sounds/${asset}.${ext}', volume);
   }
 }

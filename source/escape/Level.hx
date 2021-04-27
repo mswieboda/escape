@@ -122,6 +122,9 @@ class Level extends FlxGroup {
               tileData = addSpike(row, col, levelStrData);
             case Lava.TILE:
               tileData = addLava(row, col, levelStrData);
+            case Player.TILE:
+              player.setPosition(col * TILE_WIDTH, row * TILE_HEIGHT - Player.HEIGHT / 2);
+              tileData = 0;
             default:
               trace('>>> [$row, $col]: ??? $tile');
               tileData = 0;
