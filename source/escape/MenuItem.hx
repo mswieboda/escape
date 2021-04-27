@@ -44,7 +44,10 @@ class MenuItem extends FlxText {
   }
 
   public function fireAction() {
-    if (action != null) action(name);
+    if (action != null) {
+      action(name);
+      playSound("blip", 0.69);
+    }
   }
 
   function playSound(asset: String, volume: Float = 1) {
