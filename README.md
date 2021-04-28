@@ -1,6 +1,14 @@
 # escape
 
-Made for a Ludum Dare 48 jam submission https://ldjam.com/events/ludum-dare/48
+[Ludum Dare 48](https://ldjam.com/events/ludum-dare/48) jam submission: https://ldjam.com/events/ludum-dare/48/escape
+
+Ludum Dare is a game jam for 48 (Compo) or 72 (Jam) hours over a weekend, I highly recommend it!
+
+> [Ludum Dare](https://ldjam.com/) is an online event where games are made from scratch in a weekend. Check us out every April and October!
+
+To download and play my LD48 submission: https://mswieboda.itch.io/escape
+
+Once voting is finished (May 18th), I'll release post-LD updates to both [itch](https://mswieboda.itch.io/escape) and [LD](https://ldjam.com/events/ludum-dare/48/escape) pages.
 
 ## Installation
 
@@ -13,7 +21,7 @@ run using `lime`
 
 `run` runs builds in `export`
 
-`test` bulids and runs
+`test` builds and runs
 
 can be built to mutiple platforms
 
