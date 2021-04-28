@@ -2,7 +2,6 @@ package;
 
 import escape.PlayState;
 import escape.MenuState;
-import escape.Action;
 
 import flixel.FlxGame;
 import flixel.FlxState;

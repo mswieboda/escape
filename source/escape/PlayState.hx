@@ -22,12 +22,12 @@ class PlayState extends FlxState {
     FlxG.mouse.enabled = false;
     FlxG.mouse.useSystemCursor = false;
 
-    Action.addInputs();
+    Actions.addInputs();
   }
 
   override function update(elapsed: Float) {
     if (!player.alive && subState == null) openSubState(new GameOverMenu());
-    if (Action.menu.triggered) openSubState(new PauseMenu());
+    if (Actions.game.menu.triggered) openSubState(new PauseMenu());
 
     super.update(elapsed);
   }

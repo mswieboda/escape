@@ -47,6 +47,6 @@ class PlayMenu extends FlxSubState {
       _parentState.persistentDraw = parentPersistentDraw;
     }
 
-    Action.addInputs();
+    Actions.addInputs();
   }
 }

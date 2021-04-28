@@ -31,13 +31,13 @@ class MenuItems extends FlxTypedGroup<MenuItem> {
   }
 
   override function update(elapsed: Float) {
-    if (Action.menuDown.triggered) {
+    if (Actions.menu.down.triggered) {
       members[selectedIndex].setSelected(false);
 
       selectedIndex = selectedIndex + 1 >= members.length ? 0 : selectedIndex + 1;
 
       members[selectedIndex].setSelected(true);
-    } else if (Action.menuUp.triggered) {
+    } else if (Actions.menu.up.triggered) {
       members[selectedIndex].setSelected(false);
 
       selectedIndex = selectedIndex - 1 < 0 ? members.length - 1 : selectedIndex - 1;
@@ -49,7 +49,7 @@ class MenuItems extends FlxTypedGroup<MenuItem> {
   }
 
   function actionCondition(name: String) {
-    return Action.menuAction.triggered;
+    return Actions.menu.action.triggered;
   }
 }
 

@@ -83,11 +83,11 @@ class Player extends FlxSprite {
       return;
     }
 
-    var left = Action.left.triggered;
-    var right = Action.right.triggered;
-    var down = Action.down.triggered;
-    var up = Action.up.triggered;
-    var jump = Action.jump.triggered;
+    var left = Actions.game.left.triggered;
+    var right = Actions.game.right.triggered;
+    var down = Actions.game.down.triggered;
+    var up = Actions.game.up.triggered;
+    var jump = Actions.game.jump.triggered;
 
     // TODO: put this back in, test
     if (left && right) left = right = false;
@@ -181,7 +181,7 @@ class Player extends FlxSprite {
 
     var door = trigger.door;
 
-    if (door.locked && Action.action.triggered) {
+    if (door.locked && Actions.game.action.triggered) {
       door.unlock();
     }
   }
@@ -200,7 +200,7 @@ class Player extends FlxSprite {
     // TODO: have actionMessage come from actions gamepad/keyboard etc somehow
     actionMessage.show("hold [left] then press [jump] to wall jump");
 
-    if (!canWallJump && Action.left.triggered) {
+    if (!canWallJump && Actions.game.left.triggered) {
       canWallJump = true;
       facing = FlxObject.LEFT;
       animation.play("wallJump");
@@ -213,7 +213,7 @@ class Player extends FlxSprite {
     actionMessage.show("hold [right] then press [jump] to wall jump");
 
     // TODO: switch to actions
-    if (!canWallJump && Action.right.triggered) {
+    if (!canWallJump && Actions.game.right.triggered) {
       canWallJump = true;
       facing = FlxObject.RIGHT;
       animation.play("wallJump");
