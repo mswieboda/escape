@@ -1,17 +1,19 @@
 package escape;
 
 import flixel.FlxG;
-import flixel.FlxState;
 
 class PlayState extends LevelState {
   var topSpikes: TopSpikes;
 
   public function new() {
-    super(AssetPaths.level__dat, AssetPaths.tiles__png);
+    var player = new Player();
+    var level = new Level(player, AssetPaths.level__dat);
+
+    super(player, level);
   }
 
-  override public function create() {
-    super.create();
+  override function addLevel() {
+    super.addLevel();
 
     topSpikes = new TopSpikes();
 

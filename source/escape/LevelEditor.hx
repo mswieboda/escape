@@ -19,12 +19,12 @@ class LevelEditor extends BaseLevel {
 
   public function new(
     player: Player,
-    levelDataFilename: String,
-    tileGraphic: FlxTilemapGraphicAsset
+    fileName: String,
+    tileGraphic: FlxTilemapGraphicAsset = AssetPaths.tiles__png
   ) {
     makeCursor();
 
-    super(player, levelDataFilename, tileGraphic);
+    super(player, fileName, tileGraphic);
   }
 
   function makeCursor() {
@@ -136,6 +136,6 @@ class LevelEditor extends BaseLevel {
 
   public function save() {
     var content = levelStrData.map(cols -> cols.join(',')).join("\n");
-    File.saveContent(levelDataFilename, content);
+    File.saveContent(fileName, content);
   }
 }

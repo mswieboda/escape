@@ -12,12 +12,12 @@ import flixel.system.FlxAssets;
 import openfl.Assets;
 
 class BaseLevel extends FlxGroup {
+  public var fileName: String;
   public var foregrounds: FlxGroup;
   public var playerPosition: FlxPoint;
   public var width(get, never): Float;
   public var height(get, never): Float;
 
-  var levelDataFilename: String;
   var tileGraphic: FlxTilemapGraphicAsset;
   var levelStrData: Array<Array<String>>;
   var tiles: FlxTilemap;
@@ -31,12 +31,12 @@ class BaseLevel extends FlxGroup {
 
   public function new(
     player: Player,
-    levelDataFilename: String,
-    tileGraphic: FlxTilemapGraphicAsset
+    fileName: String,
+    tileGraphic: FlxTilemapGraphicAsset = AssetPaths.tiles__png
   ) {
     super();
 
-    this.levelDataFilename = levelDataFilename;
+    this.fileName = fileName;
     this.tileGraphic = tileGraphic;
 
     foregrounds = new FlxGroup();
@@ -46,7 +46,7 @@ class BaseLevel extends FlxGroup {
     ladderSprites = new FlxGroup();
     spikes = new FlxGroup();
 
-    loadTilesFromFile(levelDataFilename);
+    loadTilesFromFile(fileName);
   }
 
   function addAll() {

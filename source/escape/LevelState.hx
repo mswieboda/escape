@@ -2,30 +2,38 @@ package escape;
 
 import flixel.FlxG;
 import flixel.FlxState;
-import flixel.system.FlxAssets;
 
 class LevelState extends FlxState {
-  var levelFile: String;
-  var tileGraphic: FlxTilemapGraphicAsset;
-  var level: Level;
   var player: Player;
+  var level: BaseLevel;
 
   public function new(
-    levelFile: String,
-    tileGraphic: FlxTilemapGraphicAsset = AssetPaths.tiles__png
+    player: Player,
+    level: BaseLevel
   ) {
     super();
 
-    this.levelFile = levelFile;
-    this.tileGraphic = tileGraphic;
+    this.player = player;
+    this.level = level;
   }
 
   override public function create() {
-    player = new Player();
-    level = new Level(player, levelFile, tileGraphic);
-    var background = new Background(level.width, level.height);
+    super.create();
 
+    // TODO: why are none of these working? move where they need to be
+    FlxG.mouse.visible = false;
+    FlxG.mouse.enabled = false;
+    FlxG.mouse.useSystemCursor = false;
+
+    Actions.addInputs();
+
+    addLevel();
+  }
+
+  function addLevel() {
     Camera.setup(player);
+
+    var background = new Background(level.width, level.height);
 
     add(background);
     add(level);
@@ -35,15 +43,6 @@ class LevelState extends FlxState {
     add(player.actionMessage);
 
     player.setPosition(level.playerPosition.x, level.playerPosition.y);
-
-    super.create();
-
-    // TODO: why are none of these working? move where they need to be
-    FlxG.mouse.visible = false;
-    FlxG.mouse.enabled = false;
-    FlxG.mouse.useSystemCursor = false;
-
-    Actions.addInputs();
   }
 
   override function update(elapsed: Float) {

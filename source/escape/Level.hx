@@ -24,8 +24,8 @@ class Level extends BaseLevel {
 
   public function new(
     player: Player,
-    levelData: String,
-    tileGraphic: FlxTilemapGraphicAsset
+    fileName: String,
+    tileGraphic: FlxTilemapGraphicAsset = AssetPaths.tiles__png
   ) {
     colliders = new FlxGroup();
     doorTriggers = new FlxGroup();
@@ -33,7 +33,7 @@ class Level extends BaseLevel {
     leftWallJumpTriggers = new FlxGroup();
     rightWallJumpTriggers = new FlxGroup();
 
-    super(player, levelData, tileGraphic);
+    super(player, fileName, tileGraphic);
 
     colliders.add(tiles);
     colliders.add(doors);
