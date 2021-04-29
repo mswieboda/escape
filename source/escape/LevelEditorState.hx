@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxState;
 
 class LevelEditorState extends FlxState {
+  var levelFileName: String;
   var level: LevelEditor;
   var player: Player;
 
@@ -26,6 +27,10 @@ class LevelEditorState extends FlxState {
   override function update(elapsed: Float) {
     super.update(elapsed);
 
-    if (Actions.game.menu.triggered) FlxG.switchState(new MenuState());
+    if (Actions.game.menu.triggered) openSubState(new LevelEditorMenu(onSave));
+  }
+
+  function onSave() {
+    level.save();
   }
 }

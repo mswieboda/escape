@@ -15,6 +15,8 @@ class BaseLevel extends FlxGroup {
   public var foregrounds: FlxGroup;
   public var playerPosition: FlxPoint;
 
+  var levelDataFilename: String;
+  var tileGraphic: FlxTilemapGraphicAsset;
   var levelStrData: Array<Array<String>>;
   var tiles: FlxTilemap;
   var doors: FlxGroup;
@@ -27,10 +29,13 @@ class BaseLevel extends FlxGroup {
 
   public function new(
     player: Player,
-    levelData: String,
+    levelDataFilename: String,
     tileGraphic: FlxTilemapGraphicAsset
   ) {
     super();
+
+    this.levelDataFilename = levelDataFilename;
+    this.tileGraphic = tileGraphic;
 
     foregrounds = new FlxGroup();
     tiles = new FlxTilemap();
@@ -38,7 +43,7 @@ class BaseLevel extends FlxGroup {
     ladders = new FlxGroup();
     spikes = new FlxGroup();
 
-    loadTiles(levelData, tileGraphic);
+    loadTilesFromFile(levelDataFilename);
 
     foregrounds.add(spikes);
   }
@@ -66,15 +71,19 @@ class BaseLevel extends FlxGroup {
     return data;
   }
 
-  function loadTiles(csv: String, tileGraphic: FlxTilemapGraphicAsset) {
-    var levelData: Array<Array<Int>> = [];
-    var ladderTileData: Array<LadderData> = [];
-
+  function loadTilesFromFile(csv: String) {
     if (Assets.exists(csv)) {
       csv = Assets.getText(csv);
     }
 
     levelStrData = parseCSV(csv);
+
+    loadTiles();
+  }
+
+  function loadTiles() {
+    var levelData: Array<Array<Int>> = [];
+    var ladderTileData: Array<LadderData> = [];
 
     for(row => rowStrData in levelStrData) {
       var rowData: Array<Int> = [];
@@ -144,6 +153,15 @@ class BaseLevel extends FlxGroup {
     }
 
     addAll();
+  }
+
+  function reloadTiles() {
+    remove(tiles);
+    remove(ladderSprites);
+    remove(doors);
+    remove(ladders);
+
+    loadTiles();
   }
 
   static function tileToSprite(tileProperties: FlxTileProperties, frames: FlxImageFrame): FlxSprite {

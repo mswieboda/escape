@@ -4,7 +4,8 @@ import flixel.system.FlxAssets;
 import flixel.FlxSprite;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxColor;
-
+import sys.io.File;
+import sys.FileSystem;
 
 class LevelEditor extends BaseLevel {
   static inline var TILE_WIDTH = BaseLevel.TILE_WIDTH;
@@ -18,12 +19,12 @@ class LevelEditor extends BaseLevel {
 
   public function new(
     player: Player,
-    levelData: String,
+    levelDataFilename: String,
     tileGraphic: FlxTilemapGraphicAsset
   ) {
     makeCursor();
 
-    super(player, levelData, tileGraphic);
+    super(player, levelDataFilename, tileGraphic);
   }
 
   function makeCursor() {
@@ -46,7 +47,6 @@ class LevelEditor extends BaseLevel {
   }
 
   override function addAll() {
-    trace('LevelEditor addAll');
     super.addAll();
 
     add(cursor);
@@ -85,7 +85,38 @@ class LevelEditor extends BaseLevel {
     var tile = getTile(cursorRow, cursorCol);
 
     if (tile == '0' || tile == '1') {
-      tiles.setTile(cursorCol, cursorRow, tile == '0' ? 1 : 0);
+      if (cursorRow >= levelStrData.length) {
+        for (r in levelStrData.length...(cursorRow + 1)) {
+          levelStrData[r] = [];
+
+          for (c in 0...levelStrData[0].length) {
+            levelStrData[r][c] = '0';
+            tiles.setTile(c, r, 0);
+          }
+        }
+      }
+
+      if (cursorCol >= levelStrData[cursorRow].length) {
+        for (c in levelStrData.length...(cursorCol + 1)) {
+          levelStrData[cursorRow][c] = '0';
+          tiles.setTile(c, cursorRow, 0);
+        }
+      }
+
+      var newTile = tile == '0' ? 1 : 0;
+      // not needed if we're using reloadTiles()
+      // tiles.setTile(cursorCol, cursorRow, newTile);
+
+      // TODO: flip this around in BaseLevel to be [cursorCol][cursorRow] for consistency with tiles.setTile
+      levelStrData[cursorRow][cursorCol] = Std.string(newTile);
+
+      // TODO: this isn't working for tiles outside the original range
+      reloadTiles();
     }
+  }
+
+  public function save() {
+    var content = levelStrData.map(cols -> cols.join(',')).join("\n");
+    File.saveContent(levelDataFilename, content);
   }
 }
