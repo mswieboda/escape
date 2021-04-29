@@ -59,9 +59,9 @@ class Level extends BaseLevel {
     FlxG.overlap(rightWallJumpTriggers, player.feetTrigger, player.onRightWallJumpTrigger);
   }
 
-  override function addDoor(row: Int, col: Int, levelStrData: Array<Array<String>>): Int {
-    var prevRowTile = getTile(levelStrData, row - 1, col);
-    var nextRowTile = getTile(levelStrData, row + 1, col);
+  override function addDoor(row: Int, col: Int): Int {
+    var prevRowTile = getTile(row - 1, col);
+    var nextRowTile = getTile(row + 1, col);
 
     if (prevRowTile != Door.TILE && nextRowTile == Door.TILE) {
       var door = new Door(col * TILE_WIDTH, row * TILE_HEIGHT);
@@ -73,11 +73,11 @@ class Level extends BaseLevel {
     return 0;
   }
 
-  override function addLadder(row: Int, col: Int, levelStrData: Array<Array<String>>, ladderTileData: Array<BaseLevel.LadderData>): Int {
-    var prevRowTile = getTile(levelStrData, row - 1, col);
-    var nextRowTile = getTile(levelStrData, row + 1, col);
-    var prevColTile = getTile(levelStrData, row, col - 1);
-    var nextColTile = getTile(levelStrData, row, col + 1);
+  override function addLadder(row: Int, col: Int, ladderTileData: Array<BaseLevel.LadderData>): Int {
+    var prevRowTile = getTile(row - 1, col);
+    var nextRowTile = getTile(row + 1, col);
+    var prevColTile = getTile(row, col - 1);
+    var nextColTile = getTile(row, col + 1);
     var tileData = 0;
 
     if (prevColTile != "0" || nextColTile != "0") {
@@ -101,11 +101,11 @@ class Level extends BaseLevel {
     return tileData;
   }
 
-  override function addSpike(row: Int, col: Int, levelStrData: Array<Array<String>>): Int {
-    var prevRowTile = getTile(levelStrData, row - 1, col);
-    var nextRowTile = getTile(levelStrData, row + 1, col);
-    var prevColTile = getTile(levelStrData, row, col - 1);
-    var nextColTile = getTile(levelStrData, row, col + 1);
+  override function addSpike(row: Int, col: Int): Int {
+    var prevRowTile = getTile(row - 1, col);
+    var nextRowTile = getTile(row + 1, col);
+    var prevColTile = getTile(row, col - 1);
+    var nextColTile = getTile(row, col + 1);
     var section = Spike.FLOOR;
 
     if (prevColTile == '1') {
@@ -133,9 +133,9 @@ class Level extends BaseLevel {
     return 0;
   }
 
-  override function addLava(row: Int, col: Int, levelStrData: Array<Array<String>>): Int {
-    var prevColTile = getTile(levelStrData, row, col - 1);
-    var nextColTile = getTile(levelStrData, row, col + 1);
+  override function addLava(row: Int, col: Int): Int {
+    var prevColTile = getTile(row, col - 1);
+    var nextColTile = getTile(row, col + 1);
     var section = Lava.MID;
 
     if (prevColTile != Lava.TILE) {
@@ -151,14 +151,14 @@ class Level extends BaseLevel {
     return 0;
   }
 
-  override function addWallJumpTrigger(row: Int, col: Int, levelStrData: Array<Array<String>>) {
-    var prevColTile = getTile(levelStrData, row, col - 1);
-    var nextColTile = getTile(levelStrData, row, col + 1);
+  override function addWallJumpTrigger(row: Int, col: Int) {
+    var prevColTile = getTile(row, col - 1);
+    var nextColTile = getTile(row, col + 1);
 
     if (prevColTile == '0') {
-      if (getTile(levelStrData, row, col - 2) == '1') return;
+      if (getTile(row, col - 2) == '1') return;
 
-      var prevCorners = [getTile(levelStrData, row - 1, col - 1), getTile(levelStrData, row + 1, col - 1)];
+      var prevCorners = [getTile(row - 1, col - 1), getTile(row + 1, col - 1)];
 
       if (prevCorners.contains('1')) return;
 
@@ -173,9 +173,9 @@ class Level extends BaseLevel {
     }
 
     if (nextColTile == '0') {
-      if (getTile(levelStrData, row, col + 2) == '1') return;
+      if (getTile(row, col + 2) == '1') return;
 
-      var nextCorners = [getTile(levelStrData, row - 1, col + 1), getTile(levelStrData, row + 1, col + 1)];
+      var nextCorners = [getTile(row - 1, col + 1), getTile(row + 1, col + 1)];
 
       if (nextCorners.contains('1')) return;
 
@@ -188,9 +188,5 @@ class Level extends BaseLevel {
 
       leftWallJumpTriggers.add(trigger);
     }
-  }
-
-  static function getTile(levelStrData: Array<Array<String>>, row: Int, col: Int): String {
-    return BaseLevel.getTile(levelStrData, row, col);
   }
 }

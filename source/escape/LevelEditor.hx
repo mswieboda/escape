@@ -13,6 +13,8 @@ class LevelEditor extends BaseLevel {
   static inline var CURSOR_COLOR = 0xFF00FF00;
 
   var cursor: FlxSprite;
+  var cursorCol: Int = 0;
+  var cursorRow: Int = 0;
 
   public function new(
     player: Player,
@@ -54,6 +56,7 @@ class LevelEditor extends BaseLevel {
     super.update(elapsed);
 
     updateCursorPosition();
+    checkForTileEdit();
   }
 
   function updateCursorPosition() {
@@ -67,8 +70,22 @@ class LevelEditor extends BaseLevel {
 
     if (up || down) {
       cursor.y += up ? -TILE_HEIGHT : TILE_HEIGHT;
+      cursorRow += up ? -1 : 1;
     } else if (left || right) {
       cursor.x += left ? -TILE_WIDTH : TILE_WIDTH;
+      cursorCol += left ? -1 : 1;
+    }
+  }
+
+  function checkForTileEdit() {
+    var action = Actions.menu.action.triggered;
+
+    if (!action) return;
+
+    var tile = getTile(cursorRow, cursorCol);
+
+    if (tile == '0' || tile == '1') {
+      tiles.setTile(cursorCol, cursorRow, tile == '0' ? 1 : 0);
     }
   }
 }

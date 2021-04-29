@@ -15,6 +15,7 @@ class BaseLevel extends FlxGroup {
   public var foregrounds: FlxGroup;
   public var playerPosition: FlxPoint;
 
+  var levelStrData: Array<Array<String>>;
   var tiles: FlxTilemap;
   var doors: FlxGroup;
   var ladders: FlxGroup;
@@ -73,7 +74,7 @@ class BaseLevel extends FlxGroup {
       csv = Assets.getText(csv);
     }
 
-    var levelStrData = parseCSV(csv);
+    levelStrData = parseCSV(csv);
 
     for(row => rowStrData in levelStrData) {
       var rowData: Array<Int> = [];
@@ -84,13 +85,13 @@ class BaseLevel extends FlxGroup {
         if (tileData == null) {
           switch(tile.toUpperCase()) {
             case Door.TILE:
-              tileData = addDoor(row, col, levelStrData);
+              tileData = addDoor(row, col);
             case Ladder.TILE:
-              tileData = addLadder(row, col, levelStrData, ladderTileData);
+              tileData = addLadder(row, col, ladderTileData);
             case Spike.TILE:
-              tileData = addSpike(row, col, levelStrData);
+              tileData = addSpike(row, col);
             case Lava.TILE:
-              tileData = addLava(row, col, levelStrData);
+              tileData = addLava(row, col);
             case Player.TILE:
               playerPosition = new FlxPoint(col * TILE_WIDTH, row * TILE_HEIGHT - Player.HEIGHT / 2);
               tileData = 0;
@@ -99,7 +100,7 @@ class BaseLevel extends FlxGroup {
               tileData = 0;
           }
         } else if (tileData == 1) {
-          addWallJumpTrigger(row, col, levelStrData);
+          addWallJumpTrigger(row, col);
         }
 
         rowData.push(tileData);
@@ -157,9 +158,9 @@ class BaseLevel extends FlxGroup {
     return tileSprite;
   }
 
-  function addDoor(row: Int, col: Int, levelStrData: Array<Array<String>>): Int {
-    var prevRowTile = getTile(levelStrData, row - 1, col);
-    var nextRowTile = getTile(levelStrData, row + 1, col);
+  function addDoor(row: Int, col: Int): Int {
+    var prevRowTile = getTile(row - 1, col);
+    var nextRowTile = getTile(row + 1, col);
 
     if (prevRowTile != Door.TILE && nextRowTile == Door.TILE) {
       var door = new Door(col * TILE_WIDTH, row * TILE_HEIGHT);
@@ -171,11 +172,11 @@ class BaseLevel extends FlxGroup {
     return 0;
   }
 
-  function addLadder(row: Int, col: Int, levelStrData: Array<Array<String>>, ladderTileData: Array<LadderData>): Int {
-    var prevRowTile = getTile(levelStrData, row - 1, col);
-    var nextRowTile = getTile(levelStrData, row + 1, col);
-    var prevColTile = getTile(levelStrData, row, col - 1);
-    var nextColTile = getTile(levelStrData, row, col + 1);
+  function addLadder(row: Int, col: Int, ladderTileData: Array<LadderData>): Int {
+    var prevRowTile = getTile(row - 1, col);
+    var nextRowTile = getTile(row + 1, col);
+    var prevColTile = getTile(row, col - 1);
+    var nextColTile = getTile(row, col + 1);
     var tileData = 0;
 
     if (prevColTile != "0" || nextColTile != "0") {
@@ -199,11 +200,11 @@ class BaseLevel extends FlxGroup {
     return tileData;
   }
 
-  function addSpike(row: Int, col: Int, levelStrData: Array<Array<String>>): Int {
-    var prevRowTile = getTile(levelStrData, row - 1, col);
-    var nextRowTile = getTile(levelStrData, row + 1, col);
-    var prevColTile = getTile(levelStrData, row, col - 1);
-    var nextColTile = getTile(levelStrData, row, col + 1);
+  function addSpike(row: Int, col: Int): Int {
+    var prevRowTile = getTile(row - 1, col);
+    var nextRowTile = getTile(row + 1, col);
+    var prevColTile = getTile(row, col - 1);
+    var nextColTile = getTile(row, col + 1);
     var section = Spike.FLOOR;
 
     if (prevColTile == '1') {
@@ -231,9 +232,9 @@ class BaseLevel extends FlxGroup {
     return 0;
   }
 
-  function addLava(row: Int, col: Int, levelStrData: Array<Array<String>>): Int {
-    var prevColTile = getTile(levelStrData, row, col - 1);
-    var nextColTile = getTile(levelStrData, row, col + 1);
+  function addLava(row: Int, col: Int): Int {
+    var prevColTile = getTile(row, col - 1);
+    var nextColTile = getTile(row, col + 1);
     var section = Lava.MID;
 
     if (prevColTile != Lava.TILE) {
@@ -249,11 +250,12 @@ class BaseLevel extends FlxGroup {
     return 0;
   }
 
-  function addWallJumpTrigger(row: Int, col: Int, levelStrData: Array<Array<String>>) {
+  function addWallJumpTrigger(row: Int, col: Int) {
     // overridden in child classes
   }
 
-  static function getTile(levelStrData: Array<Array<String>>, row: Int, col: Int): String {
+  // TODO: this is backwards, maybe switch to col, row (same with all above methods)
+  function getTile(row: Int, col: Int): String {
     var safe = row >= 0 && row < levelStrData.length && col >= 0 && col < levelStrData[row].length;
 
     return safe ? levelStrData[row][col].toUpperCase() : '0';
