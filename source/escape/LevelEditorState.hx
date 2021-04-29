@@ -13,6 +13,9 @@ class LevelEditorState extends LevelState {
   }
 
   override function addLevel() {
+    var background = new Background(level.width, level.height);
+
+    add(background);
     add(level);
     add(player);
     add(level.foregrounds);
