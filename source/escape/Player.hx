@@ -152,7 +152,7 @@ class Player extends FlxSprite {
     feetTrigger.setPosition(x, y + height - FEET_TRIGGER_HEIGHT);
   }
 
-  public function updateBeforeCollisionChecks(elapsed: Float) {
+  public function updateBeforeCollisionChecks() {
     climbing = false;
     canWallJump = false;
     acceleration.y = GRAVITY;

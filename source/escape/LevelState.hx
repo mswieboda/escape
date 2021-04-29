@@ -21,8 +21,15 @@ class LevelState extends FlxState {
     player = new Player();
     level = new Level(player, levelFile, tileGraphic);
 
+    Camera.setup(player);
+
     add(level);
+    add(player);
+    add(player.feetTrigger);
+    add(level.foregrounds);
     add(player.actionMessage);
+
+    player.setPosition(level.playerPosition.x, level.playerPosition.y);
 
     super.create();
 
@@ -36,6 +43,9 @@ class LevelState extends FlxState {
 
   override function update(elapsed: Float) {
     super.update(elapsed);
+
+    player.updateBeforeCollisionChecks();
+    level.updateCollisions(player);
 
     if (!player.alive && subState == null) openSubState(new GameOverMenu());
     if (Actions.game.menu.triggered) openSubState(new PauseMenu());
