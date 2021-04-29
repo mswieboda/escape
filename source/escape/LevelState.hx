@@ -10,7 +10,10 @@ class LevelState extends FlxState {
   var level: Level;
   var player: Player;
 
-  public function new(levelFile: String, tileGraphic: FlxTilemapGraphicAsset) {
+  public function new(
+    levelFile: String,
+    tileGraphic: FlxTilemapGraphicAsset = AssetPaths.tiles__png
+  ) {
     super();
 
     this.levelFile = levelFile;

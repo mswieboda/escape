@@ -8,13 +8,18 @@ class LevelEditorState extends FlxState {
   var level: LevelEditor;
   var player: Player;
 
-  override public function create() {
+  public function new(levelFileName = AssetPaths.test__dat) {
+    super();
+
     player = new Player();
-    level = new LevelEditor(player, AssetPaths.test__dat, AssetPaths.tiles__png);
+    level = new LevelEditor(player, levelFileName, AssetPaths.tiles__png);
+    this.levelFileName = levelFileName;
+  }
+
+  override public function create() {
+    super.create();
 
     add(level);
-
-    super.create();
 
     // TODO: why are none of these working? move where they need to be
     FlxG.mouse.visible = false;
@@ -27,10 +32,6 @@ class LevelEditorState extends FlxState {
   override function update(elapsed: Float) {
     super.update(elapsed);
 
-    if (Actions.game.menu.triggered) openSubState(new LevelEditorMenu(onSave));
-  }
-
-  function onSave() {
-    level.save();
+    if (Actions.game.menu.triggered) openSubState(new LevelEditorMenu(level, levelFileName));
   }
 }
