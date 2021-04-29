@@ -161,6 +161,8 @@ class BaseLevel extends FlxGroup {
     remove(doors);
     remove(ladders);
 
+    tiles = new FlxTilemap();
+
     loadTiles();
   }
 

@@ -9,11 +9,16 @@ class LevelEditorMenu extends PlayMenu {
     var title = "Level Editor";
     var itemData = [
       { name: "resume", action: name -> close() },
-      { name: "save", action: name -> onSave() },
+      { name: "save", action: name -> save(onSave) },
       { name: "load", action: name -> close() },
       { name: "exit", action: name -> FlxG.switchState(new MenuState()) }
     ];
 
     super(title, itemData);
+  }
+
+  function save(onSave: () -> Void) {
+    onSave();
+    close();
   }
 }

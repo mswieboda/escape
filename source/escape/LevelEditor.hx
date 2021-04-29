@@ -96,21 +96,18 @@ class LevelEditor extends BaseLevel {
         }
       }
 
-      if (cursorCol >= levelStrData[cursorRow].length) {
-        for (c in levelStrData.length...(cursorCol + 1)) {
-          levelStrData[cursorRow][c] = '0';
-          tiles.setTile(c, cursorRow, 0);
+      if (cursorCol >= levelStrData[0].length) {
+        for (r in 0...levelStrData.length) {
+          for (c in levelStrData[r].length...(cursorCol + 1)) {
+            levelStrData[r][c] = '0';
+            tiles.setTile(c, cursorRow, 0);
+          }
         }
       }
 
-      var newTile = tile == '0' ? 1 : 0;
-      // not needed if we're using reloadTiles()
-      // tiles.setTile(cursorCol, cursorRow, newTile);
-
       // TODO: flip this around in BaseLevel to be [cursorCol][cursorRow] for consistency with tiles.setTile
-      levelStrData[cursorRow][cursorCol] = Std.string(newTile);
+      levelStrData[cursorRow][cursorCol] = tile == '0' ? '1' : '0';
 
-      // TODO: this isn't working for tiles outside the original range
       reloadTiles();
     }
   }
