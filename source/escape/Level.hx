@@ -22,7 +22,6 @@ class Level extends FlxGroup {
   var leftWallJumpTriggers: FlxGroup;
   var rightWallJumpTriggers: FlxGroup;
   var spikes: FlxGroup;
-  var topSpikes: TopSpikes;
 
   static inline var TILE_WIDTH = 32;
   static inline var TILE_HEIGHT = 32;
@@ -48,11 +47,8 @@ class Level extends FlxGroup {
     leftWallJumpTriggers = new FlxGroup();
     rightWallJumpTriggers = new FlxGroup();
     spikes = new FlxGroup();
-    topSpikes = new TopSpikes();
 
     loadTiles(levelData, tileGraphic);
-
-    spikes.add(topSpikes);
 
     colliders.add(tiles);
     colliders.add(doors);
@@ -70,8 +66,6 @@ class Level extends FlxGroup {
   }
 
   override function update(elapsed: Float) {
-    Camera.update(elapsed, topSpikes.cameraMinY());
-
     super.update(elapsed);
 
     player.updateBeforeCollisionChecks(elapsed);

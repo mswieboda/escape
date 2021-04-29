@@ -24,8 +24,9 @@ class MenuState extends FlxState {
     title.screenCenter(FlxAxes.X);
 
     var menuItems = new MenuItems(title.y + title.height + PADDING, [
-      { name: "start", action: name -> FlxG.switchState(new PlayState()) },
+      { name: "start", action: name -> FlxG.switchState(new IntroState()) },
       { name: "settings", action: name -> FlxG.switchState(new MenuState()) },
+      { name: "level editor", action: name -> FlxG.switchState(new LevelEditorState()) },
       { name: "credits", action: name -> FlxG.switchState(new MenuState()) },
 #if (!web)
       { name: "exit", action: name -> Sys.exit(0) }

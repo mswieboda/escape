@@ -3,32 +3,26 @@ package escape;
 import flixel.FlxG;
 import flixel.FlxState;
 
-class PlayState extends FlxState {
-  var level: Level;
-  var player: Player;
+class PlayState extends LevelState {
+  var topSpikes: TopSpikes;
+
+  public function new() {
+    super(AssetPaths.level__dat, AssetPaths.tiles__png);
+  }
 
   override public function create() {
-    player = new Player();
-
-    level = new Level(player, AssetPaths.level__dat, AssetPaths.tiles__png);
-
-    add(level);
-    add(player.actionMessage);
-
     super.create();
 
-    // TODO: why are none of these working? move where they need to be
-    FlxG.mouse.visible = false;
-    FlxG.mouse.enabled = false;
-    FlxG.mouse.useSystemCursor = false;
+    topSpikes = new TopSpikes();
 
-    Actions.addInputs();
+    add(topSpikes);
   }
 
   override function update(elapsed: Float) {
-    if (!player.alive && subState == null) openSubState(new GameOverMenu());
-    if (Actions.game.menu.triggered) openSubState(new PauseMenu());
-
     super.update(elapsed);
+
+    Camera.update(elapsed, topSpikes.cameraMinY());
+
+    FlxG.collide(topSpikes, player, Player.onHitSpikes);
   }
 }
