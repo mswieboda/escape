@@ -11,7 +11,7 @@ class LevelEditorState extends FlxState {
   public function new(levelFileName = AssetPaths.test__dat) {
     super();
 
-    player = new Player();
+    player = new EditorPlayer();
     level = new LevelEditor(player, levelFileName, AssetPaths.tiles__png);
     this.levelFileName = levelFileName;
   }
@@ -20,6 +20,10 @@ class LevelEditorState extends FlxState {
     super.create();
 
     add(level);
+    add(player);
+    add(level.foregrounds);
+
+    player.setPosition(level.playerPosition.x, level.playerPosition.y);
 
     // TODO: why are none of these working? move where they need to be
     FlxG.mouse.visible = false;

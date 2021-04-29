@@ -46,7 +46,6 @@ class GameActions {
     jump.addKey(SPACE, JUST_PRESSED);
     action.addKey(ENTER, JUST_PRESSED);
     menu.addKey(ESCAPE, JUST_PRESSED);
-    menu.addKey(BACKSPACE, JUST_PRESSED);
 
     // Add gamepad DPAD inputs
     up.addGamepad(DPAD_UP, PRESSED);

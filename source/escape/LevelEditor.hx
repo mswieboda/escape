@@ -49,7 +49,7 @@ class LevelEditor extends BaseLevel {
   override function addAll() {
     super.addAll();
 
-    add(cursor);
+    foregrounds.add(cursor);
   }
 
   override function update(elapsed: Float) {
@@ -102,8 +102,6 @@ class LevelEditor extends BaseLevel {
       } else {
         newTile = allTiles[index - 1 >= 0 ? index - 1 : allTiles.length - 1];
       }
-
-      trace('>>> cycle${cycleForward ? "Forward" : "Back"} tileIndex: $index tile: $tile allTiles[index]: ${allTiles[index]} newTile: $newTile');
     }
 
     if (newTile != '') {
