@@ -14,6 +14,8 @@ import openfl.Assets;
 class BaseLevel extends FlxGroup {
   public var foregrounds: FlxGroup;
   public var playerPosition: FlxPoint;
+  public var width(get, never): Float;
+  public var height(get, never): Float;
 
   var levelDataFilename: String;
   var tileGraphic: FlxTilemapGraphicAsset;
@@ -55,6 +57,9 @@ class BaseLevel extends FlxGroup {
 
     foregrounds.add(spikes);
   }
+
+  function get_width() return tiles.width;
+  function get_height() return tiles.height;
 
   public function updateCollisions(player: Player) {
     // NOTE: overridden in child classes

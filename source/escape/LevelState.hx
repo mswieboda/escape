@@ -23,9 +23,11 @@ class LevelState extends FlxState {
   override public function create() {
     player = new Player();
     level = new Level(player, levelFile, tileGraphic);
+    var background = new Background(level.width, level.height);
 
     Camera.setup(player);
 
+    add(background);
     add(level);
     add(player);
     add(player.feetTrigger);
