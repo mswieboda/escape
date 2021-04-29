@@ -41,11 +41,10 @@ class BaseLevel extends FlxGroup {
     tiles = new FlxTilemap();
     doors = new FlxGroup();
     ladders = new FlxGroup();
+    ladderSprites = new FlxGroup();
     spikes = new FlxGroup();
 
     loadTilesFromFile(levelDataFilename);
-
-    foregrounds.add(spikes);
   }
 
   function addAll() {
@@ -53,6 +52,8 @@ class BaseLevel extends FlxGroup {
     add(ladderSprites);
     add(doors);
     add(ladders);
+
+    foregrounds.add(spikes);
   }
 
   public function updateCollisions(player: Player) {
@@ -161,7 +162,13 @@ class BaseLevel extends FlxGroup {
     remove(doors);
     remove(ladders);
 
+    foregrounds.clear();
+    tiles.destroy();
     tiles = new FlxTilemap();
+    doors.clear();
+    ladders.clear();
+    ladderSprites.clear();
+    spikes.clear();
 
     loadTiles();
   }

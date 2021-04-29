@@ -79,36 +79,60 @@ class LevelEditor extends BaseLevel {
 
   function checkForTileEdit() {
     var action = Actions.menu.action.triggered;
+    var cycleForward = Actions.editor.cycleForward.triggered;
+    var cycleBack = Actions.editor.cycleForward.triggered;
 
-    if (!action) return;
+    if (!action && !cycleForward && !cycleBack) return;
 
     var tile = getTile(cursorRow, cursorCol);
+    var newTile = '';
 
-    if (tile == '0' || tile == '1') {
-      if (cursorRow >= levelStrData.length) {
-        for (r in levelStrData.length...(cursorRow + 1)) {
-          levelStrData[r] = [];
+    addEmptiesToCursor();
 
-          for (c in 0...levelStrData[0].length) {
-            levelStrData[r][c] = '0';
-            tiles.setTile(c, r, 0);
-          }
-        }
+    if (action && (tile == '0' || tile == '1')) {
+      newTile = tile == '0' ? '1' : '0';
+    } else if (cycleForward || cycleBack) {
+      var allTiles = ['0', '1', Spike.TILE, Lava.TILE, Door.TILE, Ladder.TILE, Player.TILE];
+      var index = allTiles.indexOf(tile.toUpperCase());
+
+      if (index < 0) return;
+
+      if (cycleForward) {
+        newTile = allTiles[index + 1 < allTiles.length ? index + 1 : 0];
+      } else {
+        newTile = allTiles[index - 1 >= 0 ? index - 1 : allTiles.length - 1];
       }
 
-      if (cursorCol >= levelStrData[0].length) {
-        for (r in 0...levelStrData.length) {
-          for (c in levelStrData[r].length...(cursorCol + 1)) {
-            levelStrData[r][c] = '0';
-            tiles.setTile(c, cursorRow, 0);
-          }
-        }
-      }
+      trace('>>> cycle${cycleForward ? "Forward" : "Back"} tileIndex: $index tile: $tile allTiles[index]: ${allTiles[index]} newTile: $newTile');
+    }
 
+    if (newTile != '') {
       // TODO: flip this around in BaseLevel to be [cursorCol][cursorRow] for consistency with tiles.setTile
-      levelStrData[cursorRow][cursorCol] = tile == '0' ? '1' : '0';
+      levelStrData[cursorRow][cursorCol] = newTile;
 
       reloadTiles();
+    }
+  }
+
+  function addEmptiesToCursor() {
+    if (cursorRow >= levelStrData.length) {
+      for (r in levelStrData.length...(cursorRow + 1)) {
+        levelStrData[r] = [];
+
+        for (c in 0...levelStrData[0].length) {
+          levelStrData[r][c] = '0';
+          tiles.setTile(c, r, 0);
+        }
+      }
+    }
+
+    if (cursorCol >= levelStrData[0].length) {
+      for (r in 0...levelStrData.length) {
+        for (c in levelStrData[r].length...(cursorCol + 1)) {
+          levelStrData[r][c] = '0';
+          tiles.setTile(c, cursorRow, 0);
+        }
+      }
     }
   }
 

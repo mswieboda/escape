@@ -32,20 +32,16 @@ class MenuActions {
     // Add keyboard inputs
     up.addKey(UP, JUST_PRESSED);
     up.addKey(W, JUST_PRESSED);
-    up.addKey(TAB, JUST_PRESSED);
     down.addKey(DOWN, JUST_PRESSED);
     down.addKey(S, JUST_PRESSED);
     left.addKey(LEFT, JUST_PRESSED);
     left.addKey(A, JUST_PRESSED);
     right.addKey(RIGHT, JUST_PRESSED);
     right.addKey(D, JUST_PRESSED);
-    // TODO: add combo of SHIFT+TAB for down
-    // down.addKey(SHIFT + TAB, JUST_PRESSED);
     action.addKey(ENTER, JUST_PRESSED);
     action.addKey(SPACE, JUST_PRESSED);
     action.addKey(SHIFT, JUST_PRESSED);
     cancel.addKey(ESCAPE, JUST_PRESSED);
-    cancel.addKey(BACKSPACE, JUST_PRESSED);
 
     // Add gamepad DPAD inputs
     up.addGamepad(DPAD_UP, JUST_PRESSED);

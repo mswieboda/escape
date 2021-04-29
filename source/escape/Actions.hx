@@ -8,11 +8,13 @@ class Actions {
   public static var actions: ActionManager;
   public static inline var game = GameActions;
   public static inline var menu = MenuActions;
+  public static inline var editor = LevelEditorActions;
 
   public static function addInputs() {
     if (actions == null) actions = FlxG.inputs.add(new ActionManager());
 
     game.addInputs(actions);
     menu.addInputs(actions);
+    editor.addInputs(actions);
   }
 }

@@ -48,6 +48,8 @@ class Level extends BaseLevel {
     add(ladderTriggers);
     add(leftWallJumpTriggers);
     add(rightWallJumpTriggers);
+
+    foregrounds.add(spikes);
   }
 
   public override function updateCollisions(player: Player) {
@@ -99,56 +101,6 @@ class Level extends BaseLevel {
     ladderTriggers.add(ladder.trigger);
 
     return tileData;
-  }
-
-  override function addSpike(row: Int, col: Int): Int {
-    var prevRowTile = getTile(row - 1, col);
-    var nextRowTile = getTile(row + 1, col);
-    var prevColTile = getTile(row, col - 1);
-    var nextColTile = getTile(row, col + 1);
-    var section = Spike.FLOOR;
-
-    if (prevColTile == '1') {
-      // 1s?
-      section = Spike.RIGHT;
-    } else if (nextColTile == '1') {
-      // ?s1 (? is not 1)
-      section = Spike.LEFT;
-    } else if (prevRowTile == '0' && nextRowTile == '1') {
-      // ?0?
-      // 0s0
-      // ?1?
-      section = Spike.FLOOR;
-    } else if (prevRowTile == '1') {
-      // ?1?
-      // 0s0
-      // ?@? (@ is ? but not 1)
-      section = Spike.TOP;
-    }
-
-    var spike = new Spike(col * TILE_WIDTH, row * TILE_HEIGHT, section);
-
-    spikes.add(spike);
-
-    return 0;
-  }
-
-  override function addLava(row: Int, col: Int): Int {
-    var prevColTile = getTile(row, col - 1);
-    var nextColTile = getTile(row, col + 1);
-    var section = Lava.MID;
-
-    if (prevColTile != Lava.TILE) {
-      section = Lava.LEFT;
-    } else if (nextColTile != Lava.TILE) {
-      section = Lava.RIGHT;
-    }
-
-    var spike = new Lava(col * TILE_WIDTH, row * TILE_HEIGHT, section);
-
-    spikes.add(spike);
-
-    return 0;
   }
 
   override function addWallJumpTrigger(row: Int, col: Int) {
