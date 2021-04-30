@@ -8,6 +8,7 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxDestroyUtil;
+import flixel.util.FlxSpriteUtil;
 import flixel.system.FlxAssets;
 import openfl.Assets;
 
@@ -54,6 +55,8 @@ class Level extends BaseLevel {
   }
 
   public override function updateCollisions(player: Player) {
+    FlxSpriteUtil.bound(player, 0, tiles.width, 0, tiles.height);
+
     FlxG.collide(colliders, player);
     FlxG.collide(spikes, player, Player.onHitSpikes);
     FlxG.overlap(doorTriggers, player, Player.onDoorTrigger, Door.onDoorTrigger);
