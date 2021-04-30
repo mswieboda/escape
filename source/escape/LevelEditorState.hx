@@ -26,6 +26,14 @@ class LevelEditorState extends LevelState {
   override function update(elapsed: Float) {
     super.update(elapsed);
 
-    if (Actions.game.menu.triggered) openSubState(new LevelEditorMenu(levelEditor));
+    if (Actions.game.menu.triggered) openMenu();
+  }
+
+  function load() {
+    openSubState(new LevelEditorLoadMenu(openMenu));
+  }
+
+  function openMenu() {
+    openSubState(new LevelEditorMenu(levelEditor, load));
   }
 }

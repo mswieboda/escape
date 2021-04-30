@@ -5,13 +5,13 @@ import flixel.FlxSubState;
 import flixel.text.FlxText;
 
 class LevelEditorMenu extends PlayMenu {
-  public function new(levelEditor: LevelEditor) {
+  public function new(levelEditor: LevelEditor, load: () -> Void) {
     var title = "Level Editor";
     var itemData = [
-      { name: "resume", action: name -> close() },
+      { name: "edit", action: name -> close() },
       { name: "test", action: name -> test(levelEditor) },
       { name: "save", action: name -> save(levelEditor) },
-      { name: "load", action: name -> close() },
+      { name: "load", action: name -> this.load(load) },
       { name: "exit", action: name -> FlxG.switchState(new MenuState()) }
     ];
 
@@ -29,6 +29,11 @@ class LevelEditorMenu extends PlayMenu {
 
   function save(levelEditor: LevelEditor) {
     levelEditor.save();
+    close();
+  }
+
+  function load(load: () -> Void) {
+    load();
     close();
   }
 }
