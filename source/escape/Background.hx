@@ -6,6 +6,7 @@ import flixel.util.FlxColor;
 class Background extends FlxSprite {
   static inline var TILE_WIDTH = BaseLevel.TILE_WIDTH;
   static inline var TILE_HEIGHT = BaseLevel.TILE_HEIGHT;
+  static inline var ALPHA = 0.3;
 
   public function new(widthInTiles: Int, heightInTiles: Int) {
     super();
@@ -26,5 +27,7 @@ class Background extends FlxSprite {
         stamp(tile, col * TILE_WIDTH, row * TILE_HEIGHT);
       }
     }
+
+    alpha = ALPHA;
   }
 }
