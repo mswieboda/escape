@@ -100,22 +100,21 @@ class BaseLevel extends FlxGroup {
         if (tileData == null) {
           switch(tile.toUpperCase()) {
             case Door.TILE:
-              tileData = addDoor(row, col);
+              tileData = tileForDoor(row, col);
             case Ladder.TILE:
-              tileData = addLadder(row, col, ladderTileData);
+              tileData = tileForLadder(row, col, ladderTileData);
             case Spike.TILE:
-              tileData = addSpike(row, col);
+              tileData = tileForSpike(row, col);
             case Lava.TILE:
-              tileData = addLava(row, col);
+              tileData = tileForLava(row, col);
             case Player.TILE:
-              playerPosition = new FlxPoint(col * TILE_WIDTH, row * TILE_HEIGHT - Player.HEIGHT / 2);
-              tileData = 0;
+              tileData = tileForPlayer(row, col);
             default:
               trace('>>> [$row, $col]: ??? $tile');
               tileData = 0;
           }
         } else if (tileData == 1) {
-          addWallJumpTrigger(row, col);
+          addWallJumpTriggers(row, col);
         }
 
         rowData.push(tileData);
@@ -190,21 +189,26 @@ class BaseLevel extends FlxGroup {
     return tileSprite;
   }
 
-  function addDoor(row: Int, col: Int): Int {
+  function tileForDoor(row: Int, col: Int): Int {
     var prevRowTile = getTile(row - 1, col);
     var nextRowTile = getTile(row + 1, col);
 
     if (prevRowTile != Door.TILE && nextRowTile == Door.TILE) {
-      var door = new Door(col * TILE_WIDTH, row * TILE_HEIGHT);
-
-      doors.add(door);
-      // doorTriggers.add(door.trigger);
+      addDoor(row, col);
     }
 
     return 0;
   }
 
-  function addLadder(row: Int, col: Int, ladderTileData: Array<LadderData>): Int {
+  function addDoor(row: Int, col: Int): Door {
+    var door = new Door(col * TILE_WIDTH, row * TILE_HEIGHT);
+
+    doors.add(door);
+
+    return door;
+  }
+
+  function tileForLadder(row: Int, col: Int, ladderTileData: Array<LadderData>): Int {
     var prevRowTile = getTile(row - 1, col);
     var nextRowTile = getTile(row + 1, col);
     var prevColTile = getTile(row, col - 1);
@@ -224,15 +228,20 @@ class BaseLevel extends FlxGroup {
       section = Ladder.BOTTOM;
     }
 
-    var ladder = new Ladder(col * TILE_WIDTH, row * TILE_HEIGHT, section);
-
-    ladders.add(ladder);
-    // ladderTriggers.add(ladder.trigger);
+    addLadder(row, col, section);
 
     return tileData;
   }
 
-  function addSpike(row: Int, col: Int): Int {
+  function addLadder(row: Int, col: Int, section: Int): Ladder {
+    var ladder = new Ladder(col * TILE_WIDTH, row * TILE_HEIGHT, section);
+
+    ladders.add(ladder);
+
+    return ladder;
+  }
+
+  function tileForSpike(row: Int, col: Int): Int {
     var prevRowTile = getTile(row - 1, col);
     var nextRowTile = getTile(row + 1, col);
     var prevColTile = getTile(row, col - 1);
@@ -264,7 +273,7 @@ class BaseLevel extends FlxGroup {
     return 0;
   }
 
-  function addLava(row: Int, col: Int): Int {
+  function tileForLava(row: Int, col: Int): Int {
     var prevColTile = getTile(row, col - 1);
     var nextColTile = getTile(row, col + 1);
     var section = Lava.MID;
@@ -282,7 +291,13 @@ class BaseLevel extends FlxGroup {
     return 0;
   }
 
-  function addWallJumpTrigger(row: Int, col: Int) {
+  function tileForPlayer(row: Int, col: Int): Int {
+    playerPosition = new FlxPoint(col * TILE_WIDTH, row * TILE_HEIGHT - Player.HEIGHT / 2);
+
+    return 0;
+  }
+
+  function addWallJumpTriggers(row: Int, col: Int) {
     // overridden in child classes
   }
 

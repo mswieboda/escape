@@ -62,49 +62,23 @@ class Level extends BaseLevel {
     FlxG.overlap(rightWallJumpTriggers, player.feetTrigger, player.onRightWallJumpTrigger);
   }
 
-  override function addDoor(row: Int, col: Int): Int {
-    var prevRowTile = getTile(row - 1, col);
-    var nextRowTile = getTile(row + 1, col);
+  override function addDoor(row: Int, col: Int): Door {
+    var door = super.addDoor(row, col);
 
-    if (prevRowTile != Door.TILE && nextRowTile == Door.TILE) {
-      var door = new Door(col * TILE_WIDTH, row * TILE_HEIGHT);
+    doorTriggers.add(door.trigger);
 
-      doors.add(door);
-      doorTriggers.add(door.trigger);
-    }
-
-    return 0;
+    return door;
   }
 
-  override function addLadder(row: Int, col: Int, ladderTileData: Array<BaseLevel.LadderData>): Int {
-    var prevRowTile = getTile(row - 1, col);
-    var nextRowTile = getTile(row + 1, col);
-    var prevColTile = getTile(row, col - 1);
-    var nextColTile = getTile(row, col + 1);
-    var tileData = 0;
+  override function addLadder(row: Int, col: Int, section: Int): Ladder {
+    var ladder = super.addLadder(row, col, section);
 
-    if (prevColTile != "0" || nextColTile != "0") {
-      tileData = 1;
-      ladderTileData.push({col: col, row: row, frames: null});
-    }
-
-    var section = Ladder.MIDDLE;
-
-    if (prevRowTile != Ladder.TILE) {
-      section = Ladder.TOP;
-    } else if (nextRowTile != Ladder.TILE) {
-      section = Ladder.BOTTOM;
-    }
-
-    var ladder = new Ladder(col * TILE_WIDTH, row * TILE_HEIGHT, section);
-
-    ladders.add(ladder);
     ladderTriggers.add(ladder.trigger);
 
-    return tileData;
+    return ladder;
   }
 
-  override function addWallJumpTrigger(row: Int, col: Int) {
+  override function addWallJumpTriggers(row: Int, col: Int) {
     var prevColTile = getTile(row, col - 1);
     var nextColTile = getTile(row, col + 1);
 
