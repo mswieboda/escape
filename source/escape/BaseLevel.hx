@@ -13,7 +13,6 @@ import openfl.Assets;
 
 class BaseLevel extends FlxGroup {
   public var fileName: String;
-  public var foregrounds: FlxGroup;
   public var playerPosition: FlxPoint;
   public var width(get, never): Float;
   public var height(get, never): Float;
@@ -21,10 +20,11 @@ class BaseLevel extends FlxGroup {
   var tileGraphic: FlxTilemapGraphicAsset;
   var levelStrData: Array<Array<String>>;
   var tiles: FlxTilemap;
+  var behindLadderSprites: FlxGroup;
   var doors: FlxGroup;
   var ladders: FlxGroup;
-  var ladderSprites: FlxGroup;
   var spikes: FlxGroup;
+  public var foregrounds: FlxGroup;
 
   static inline var TILE_WIDTH = 32;
   static inline var TILE_HEIGHT = 32;
@@ -39,19 +39,19 @@ class BaseLevel extends FlxGroup {
     this.fileName = fileName;
     this.tileGraphic = tileGraphic;
 
-    foregrounds = new FlxGroup();
     tiles = new FlxTilemap();
+    behindLadderSprites = new FlxGroup();
     doors = new FlxGroup();
     ladders = new FlxGroup();
-    ladderSprites = new FlxGroup();
     spikes = new FlxGroup();
+    foregrounds = new FlxGroup();
 
     loadTilesFromFile(fileName);
   }
 
   function addAll() {
     add(tiles);
-    add(ladderSprites);
+    add(behindLadderSprites);
     add(doors);
     add(ladders);
 
@@ -155,7 +155,7 @@ class BaseLevel extends FlxGroup {
       sprite.moves = false;
       sprite.solid = false;
 
-      ladderSprites.add(sprite);
+      behindLadderSprites.add(sprite);
     }
 
     addAll();
@@ -163,7 +163,7 @@ class BaseLevel extends FlxGroup {
 
   function reloadTiles() {
     remove(tiles);
-    remove(ladderSprites);
+    remove(behindLadderSprites);
     remove(doors);
     remove(ladders);
 
@@ -172,7 +172,7 @@ class BaseLevel extends FlxGroup {
     tiles = new FlxTilemap();
     doors.clear();
     ladders.clear();
-    ladderSprites.clear();
+    behindLadderSprites.clear();
     spikes.clear();
 
     loadTiles();

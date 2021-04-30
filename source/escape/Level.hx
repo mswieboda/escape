@@ -42,6 +42,7 @@ class Level extends BaseLevel {
 
   override function addAll() {
     add(tiles);
+    add(behindLadderSprites);
     add(doors);
     add(ladders);
     add(doorTriggers);
