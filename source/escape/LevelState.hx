@@ -33,7 +33,7 @@ class LevelState extends FlxState {
   function addLevel() {
     Camera.setup(player);
 
-    var background = new Background(level.width, level.height);
+    var background = new Background(level.widthInTiles, level.heightInTiles);
 
     add(background);
     add(level);

@@ -14,8 +14,8 @@ import openfl.Assets;
 class BaseLevel extends FlxGroup {
   public var fileName: String;
   public var playerPosition: FlxPoint;
-  public var width(get, never): Float;
-  public var height(get, never): Float;
+  public var widthInTiles(get, never): Int;
+  public var heightInTiles(get, never): Int;
 
   var tileGraphic: FlxTilemapGraphicAsset;
   var levelStrData: Array<Array<String>>;
@@ -26,8 +26,8 @@ class BaseLevel extends FlxGroup {
   var spikes: FlxGroup;
   public var foregrounds: FlxGroup;
 
-  static inline var TILE_WIDTH = 32;
-  static inline var TILE_HEIGHT = 32;
+  public static inline var TILE_WIDTH = 32;
+  public static inline var TILE_HEIGHT = 32;
 
   public function new(
     player: Player,
@@ -58,8 +58,8 @@ class BaseLevel extends FlxGroup {
     foregrounds.add(spikes);
   }
 
-  function get_width() return tiles.width;
-  function get_height() return tiles.height;
+  function get_widthInTiles(): Int return tiles.widthInTiles;
+  function get_heightInTiles(): Int return tiles.heightInTiles;
 
   public function updateCollisions(player: Player) {
     // NOTE: overridden in child classes

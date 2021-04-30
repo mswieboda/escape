@@ -18,8 +18,8 @@ class Level extends BaseLevel {
   var leftWallJumpTriggers: FlxGroup;
   var rightWallJumpTriggers: FlxGroup;
 
-  static inline var TILE_WIDTH = 32;
-  static inline var TILE_HEIGHT = 32;
+  static inline var TILE_WIDTH = BaseLevel.TILE_WIDTH;
+  static inline var TILE_HEIGHT = BaseLevel.TILE_HEIGHT;
   static inline var WALL_TRIGGER_WIDTH = 16;
 
   public function new(
