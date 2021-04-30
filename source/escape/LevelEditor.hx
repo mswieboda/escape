@@ -84,7 +84,7 @@ class LevelEditor extends BaseLevel {
 
     if (!action && !cycleForward && !cycleBack) return;
 
-    var tile = getTile(cursorRow, cursorCol);
+    var tile = getTile(cursorCol, cursorRow);
     var newTile = '';
 
     addEmptiesToCursor();
@@ -105,7 +105,6 @@ class LevelEditor extends BaseLevel {
     }
 
     if (newTile != '') {
-      // TODO: flip this around in BaseLevel to be [cursorCol][cursorRow] for consistency with tiles.setTile
       levelStrData[cursorRow][cursorCol] = newTile;
 
       reloadTiles();
@@ -135,7 +134,7 @@ class LevelEditor extends BaseLevel {
   }
 
   public function save() {
-    var content = levelStrData.map(cols -> cols.join(',')).join("\n");
+    var content = levelStrData.map(row -> row.join(',')).join("\n");
     File.saveContent(fileName, content);
   }
 }

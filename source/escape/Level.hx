@@ -62,30 +62,30 @@ class Level extends BaseLevel {
     FlxG.overlap(rightWallJumpTriggers, player.feetTrigger, player.onRightWallJumpTrigger);
   }
 
-  override function addDoor(row: Int, col: Int): Door {
-    var door = super.addDoor(row, col);
+  override function addDoor(col: Int, row: Int): Door {
+    var door = super.addDoor(col, row);
 
     doorTriggers.add(door.trigger);
 
     return door;
   }
 
-  override function addLadder(row: Int, col: Int, section: Int): Ladder {
-    var ladder = super.addLadder(row, col, section);
+  override function addLadder(col: Int, row: Int, section: Int): Ladder {
+    var ladder = super.addLadder(col, row, section);
 
     ladderTriggers.add(ladder.trigger);
 
     return ladder;
   }
 
-  override function addWallJumpTriggers(row: Int, col: Int) {
-    var prevColTile = getTile(row, col - 1);
-    var nextColTile = getTile(row, col + 1);
+  override function addWallJumpTriggers(col: Int, row: Int) {
+    var prevColTile = getTile(col - 1, row);
+    var nextColTile = getTile(col + 1, row);
 
     if (prevColTile == '0') {
-      if (getTile(row, col - 2) == '1') return;
+      if (getTile(col - 2, row) == '1') return;
 
-      var prevCorners = [getTile(row - 1, col - 1), getTile(row + 1, col - 1)];
+      var prevCorners = [getTile(col - 1, row - 1), getTile(col - 1, row + 1)];
 
       if (prevCorners.contains('1')) return;
 
@@ -100,9 +100,9 @@ class Level extends BaseLevel {
     }
 
     if (nextColTile == '0') {
-      if (getTile(row, col + 2) == '1') return;
+      if (getTile(col + 2, row) == '1') return;
 
-      var nextCorners = [getTile(row - 1, col + 1), getTile(row + 1, col + 1)];
+      var nextCorners = [getTile(col + 1, row - 1), getTile(col + 1, row + 1)];
 
       if (nextCorners.contains('1')) return;
 
