@@ -31,7 +31,7 @@ class Player extends FlxSprite {
   static inline var IDLE_TIME = 0.75;
 
   // sound
-  static inline var FLOOR_SOUND_MINIMUM_VELOCITY = 10;
+  static inline var FLOOR_MAX_VELOCITY = 480;
 
   static inline var FEET_TRIGGER_HEIGHT = 16;
 
@@ -43,6 +43,8 @@ class Player extends FlxSprite {
   var canWallJump = false;
   var idleTimer: FlxTimer;
   var firstFrame = true;
+  var reachedMaxVelocityFromFloor = false;
+  var triggeredMaxVelocityFromFloor = false;
 
   public function new() {
     super();
@@ -150,6 +152,17 @@ class Player extends FlxSprite {
       }
     }
 
+    if (triggeredMaxVelocityFromFloor) {
+      if (velocity.y <= 0) {
+        triggeredMaxVelocityFromFloor = false;
+        reachedMaxVelocityFromFloor = false;
+      }
+    } else {
+      if (velocity.y >= FLOOR_MAX_VELOCITY) {
+        reachedMaxVelocityFromFloor = true;
+      }
+    }
+
     // lock feetTrigger to player position
     feetTrigger.setPosition(x, y + height - FEET_TRIGGER_HEIGHT);
   }
@@ -224,10 +237,13 @@ class Player extends FlxSprite {
   }
 
   public function onFloorTrigger(trigger: Trigger, feetTrigger: Trigger) {
-    // TODO: this is temporary,
-    //       doesn't work consistently if trigger size is too small
-    //       should track fallHeight or similar instead
-    if (velocity.y > FLOOR_SOUND_MINIMUM_VELOCITY) {
+    if (!triggeredMaxVelocityFromFloor && reachedMaxVelocityFromFloor) {
+      triggeredMaxVelocityFromFloor = true;
+
+      // TODO: break leg/slow down, etc
+      //       temporarily for a min, 3 mins, etc
+
+      FlxG.camera.shake(0.015, 0.3);
       playSound("jump", 0.5);
     }
   }
