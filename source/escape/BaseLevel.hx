@@ -113,9 +113,9 @@ class BaseLevel extends FlxGroup {
               trace('>>> ($col, $row): ??? $tile');
               tileData = 0;
           }
-        } else if (tileData == 1) {
-          addWallJumpTriggers(col, row);
         }
+
+        addTileTriggers(col, row, tile);
 
         rowData.push(tileData);
       }
@@ -297,7 +297,7 @@ class BaseLevel extends FlxGroup {
     return 0;
   }
 
-  function addWallJumpTriggers(col: Int, row: Int) {
+  function addTileTriggers(col: Int, row: Int, tile: String) {
     // overridden in child classes
   }
 

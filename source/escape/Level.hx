@@ -18,10 +18,11 @@ class Level extends BaseLevel {
   var ladderTriggers: FlxGroup;
   var leftWallJumpTriggers: FlxGroup;
   var rightWallJumpTriggers: FlxGroup;
+  var floorTriggers: FlxGroup;
 
   static inline var TILE_WIDTH = BaseLevel.TILE_WIDTH;
   static inline var TILE_HEIGHT = BaseLevel.TILE_HEIGHT;
-  static inline var WALL_TRIGGER_WIDTH = 16;
+  static inline var WALL_TRIGGER_SIZE = 16;
 
   public function new(
     player: Player,
@@ -33,6 +34,7 @@ class Level extends BaseLevel {
     ladderTriggers = new FlxGroup();
     leftWallJumpTriggers = new FlxGroup();
     rightWallJumpTriggers = new FlxGroup();
+    floorTriggers = new FlxGroup();
 
     super(player, fileName, tileGraphic);
 
@@ -50,6 +52,7 @@ class Level extends BaseLevel {
     add(ladderTriggers);
     add(leftWallJumpTriggers);
     add(rightWallJumpTriggers);
+    add(floorTriggers);
 
     foregrounds.add(spikes);
   }
@@ -63,6 +66,7 @@ class Level extends BaseLevel {
     FlxG.overlap(ladderTriggers, player, Player.onLadderTrigger);
     FlxG.overlap(leftWallJumpTriggers, player.feetTrigger, player.onLeftWallJumpTrigger);
     FlxG.overlap(rightWallJumpTriggers, player.feetTrigger, player.onRightWallJumpTrigger);
+    FlxG.overlap(floorTriggers, player.feetTrigger, player.onFloorTrigger);
   }
 
   override function addDoor(col: Int, row: Int): Door {
@@ -81,42 +85,57 @@ class Level extends BaseLevel {
     return ladder;
   }
 
-  override function addWallJumpTriggers(col: Int, row: Int) {
-    var prevColTile = getTile(col - 1, row);
-    var nextColTile = getTile(col + 1, row);
+  override function addTileTriggers(col: Int, row: Int, tile: String) {
+    if (tile == '1') {
+      var prevRowTile = getTile(col, row - 1);
+      var nextRowTile = getTile(col, row + 1);
+      var prevColTile = getTile(col - 1, row);
+      var nextColTile = getTile(col + 1, row);
 
-    if (prevColTile == '0') {
-      if (getTile(col - 2, row) == '1') return;
+      if (prevRowTile != '1') {
+        var trigger = new Trigger(
+          col * TILE_WIDTH + TILE_WIDTH / 2 - WALL_TRIGGER_SIZE / 4,
+          row * TILE_HEIGHT - WALL_TRIGGER_SIZE * 2,
+          WALL_TRIGGER_SIZE,
+          WALL_TRIGGER_SIZE * 2
+        );
 
-      var prevCorners = [getTile(col - 1, row - 1), getTile(col - 1, row + 1)];
+        floorTriggers.add(trigger);
+      }
 
-      if (prevCorners.contains('1')) return;
+      if (prevColTile == '0') {
+        if (getTile(col - 2, row) == '1') return;
 
-      var trigger = new Trigger(
-        col * TILE_WIDTH - WALL_TRIGGER_WIDTH / 2,
-        row * TILE_HEIGHT,
-        WALL_TRIGGER_WIDTH,
-        TILE_HEIGHT
-      );
+        var prevCorners = [getTile(col - 1, row - 1), getTile(col - 1, row + 1)];
 
-      rightWallJumpTriggers.add(trigger);
-    }
+        if (prevCorners.contains('1')) return;
 
-    if (nextColTile == '0') {
-      if (getTile(col + 2, row) == '1') return;
+        var trigger = new Trigger(
+          col * TILE_WIDTH - WALL_TRIGGER_SIZE / 2,
+          row * TILE_HEIGHT,
+          WALL_TRIGGER_SIZE,
+          TILE_HEIGHT
+        );
 
-      var nextCorners = [getTile(col + 1, row - 1), getTile(col + 1, row + 1)];
+        rightWallJumpTriggers.add(trigger);
+      }
 
-      if (nextCorners.contains('1')) return;
+      if (nextColTile == '0') {
+        if (getTile(col + 2, row) == '1') return;
 
-      var trigger = new Trigger(
-        col * TILE_WIDTH + TILE_WIDTH - WALL_TRIGGER_WIDTH / 2,
-        row * TILE_HEIGHT,
-        WALL_TRIGGER_WIDTH,
-        TILE_HEIGHT
-      );
+        var nextCorners = [getTile(col + 1, row - 1), getTile(col + 1, row + 1)];
 
-      leftWallJumpTriggers.add(trigger);
+        if (nextCorners.contains('1')) return;
+
+        var trigger = new Trigger(
+          col * TILE_WIDTH + TILE_WIDTH - WALL_TRIGGER_SIZE / 2,
+          row * TILE_HEIGHT,
+          WALL_TRIGGER_SIZE,
+          TILE_HEIGHT
+        );
+
+        leftWallJumpTriggers.add(trigger);
+      }
     }
   }
 }

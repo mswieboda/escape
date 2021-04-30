@@ -3,6 +3,7 @@ package;
 import escape.PlayState;
 import escape.MenuState;
 
+import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
 import openfl.display.Sprite;
@@ -20,7 +21,9 @@ class Main extends Sprite {
 #end
     env = env != null ? env.toUpperCase() : env;
 
-    var state: Class<FlxState> = env == TEST ? PlayState : MenuState;
+    var state: Class<FlxState> = MenuState;
+
+    if (env == TEST) FlxG.debugger.drawDebug = true;
 
     addChild(new FlxGame(0, 0, state, 1, 60, 60, true, false));
   }

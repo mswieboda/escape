@@ -30,6 +30,9 @@ class Player extends FlxSprite {
   static inline var IDLE_FPS = 12;
   static inline var IDLE_TIME = 0.75;
 
+  // sound
+  static inline var FLOOR_SOUND_MINIMUM_VELOCITY = 10;
+
   static inline var FEET_TRIGGER_HEIGHT = 16;
 
   public var actionMessage: ActionMessage;
@@ -217,6 +220,15 @@ class Player extends FlxSprite {
       facing = FlxObject.RIGHT;
       animation.play("wallJump");
       animation.pause();
+    }
+  }
+
+  public function onFloorTrigger(trigger: Trigger, feetTrigger: Trigger) {
+    // TODO: this is temporary,
+    //       doesn't work consistently if trigger size is too small
+    //       should track fallHeight or similar instead
+    if (velocity.y > FLOOR_SOUND_MINIMUM_VELOCITY) {
+      playSound("jump", 0.5);
     }
   }
 
