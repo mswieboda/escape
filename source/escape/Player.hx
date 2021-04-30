@@ -89,7 +89,6 @@ class Player extends FlxSprite {
     var up = Actions.game.up.triggered;
     var jump = Actions.game.jump.triggered;
 
-    // TODO: put this back in, test
     if (left && right) left = right = false;
     if (down && up) up = down = false;
 
@@ -193,6 +192,7 @@ class Player extends FlxSprite {
   function ladderTrigger(trigger: LadderTrigger) {
     // TODO: have actionMessage come from actions gamepad/keyboard etc somehow
     actionMessage.show("[down/up] to descend/climb");
+
     climbing = true;
   }
 
@@ -212,7 +212,6 @@ class Player extends FlxSprite {
     // TODO: have actionMessage come from actions gamepad/keyboard etc somehow
     actionMessage.show("hold [right] then press [jump] to wall jump");
 
-    // TODO: switch to actions
     if (!canWallJump && Actions.game.right.triggered) {
       canWallJump = true;
       facing = FlxObject.RIGHT;
