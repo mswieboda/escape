@@ -1,57 +1,20 @@
 package escape;
 
 import flixel.FlxG;
-import flixel.FlxState;
 
-class LevelState extends FlxState {
-  var player: Player;
-  var level: BaseLevel;
+class LevelState extends BaseLevelState {
+  var levelFileName: String;
 
-  public function new(
-    player: Player,
-    level: BaseLevel
-  ) {
-    super();
+  public function new(levelFileName: String = AssetPaths.level__dat) {
+    this.levelFileName = levelFileName;
 
-    this.player = player;
-    this.level = level;
+    var player = new Player();
+    var level = new Level(player, levelFileName);
+
+    super(player, level);
   }
 
-  override public function create() {
-    super.create();
-
-    // TODO: why are none of these working? move where they need to be
-    FlxG.mouse.visible = false;
-    FlxG.mouse.enabled = false;
-    FlxG.mouse.useSystemCursor = false;
-
-    Actions.addInputs();
-
-    addLevel();
-  }
-
-  function addLevel() {
-    Camera.setup(player);
-
-    var background = new Background(level.widthInTiles, level.heightInTiles);
-
-    add(background);
-    add(level);
-    add(player);
-    add(player.feetTrigger);
-    add(level.foregrounds);
-    add(player.actionMessage);
-
-    player.setPosition(level.playerPosition.x, level.playerPosition.y);
-  }
-
-  override function update(elapsed: Float) {
-    super.update(elapsed);
-
-    player.updateBeforeCollisionChecks();
-    level.updateCollisions(player);
-
-    if (!player.alive && subState == null) openSubState(new GameOverMenu());
-    if (Actions.game.menu.triggered) openSubState(new PauseMenu());
+  override public function restart() {
+    FlxG.switchState(Type.createInstance(Type.getClass(this), [levelFileName]));
   }
 }

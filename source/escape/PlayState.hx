@@ -6,10 +6,7 @@ class PlayState extends LevelState {
   var topSpikes: TopSpikes;
 
   public function new() {
-    var player = new Player();
-    var level = new Level(player, AssetPaths.level__dat);
-
-    super(player, level);
+    super(AssetPaths.level__dat);
   }
 
   override function addLevel() {

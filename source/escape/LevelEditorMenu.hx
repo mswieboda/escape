@@ -19,12 +19,9 @@ class LevelEditorMenu extends PlayMenu {
   }
 
   function test(levelEditor: LevelEditor) {
-    var player = new Player();
-    var testLevel = new Level(player, levelEditor.fileName);
-
     close();
 
-    FlxG.switchState(new LevelState(player, testLevel));
+    FlxG.switchState(new LevelState(levelEditor.fileName));
   }
 
   function save(levelEditor: LevelEditor) {

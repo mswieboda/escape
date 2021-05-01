@@ -2,7 +2,7 @@ package escape;
 
 import flixel.FlxG;
 
-class LevelEditorState extends LevelState {
+class LevelEditorState extends BaseLevelState {
   var levelEditor: LevelEditor;
 
   public function new(levelFileName = AssetPaths.test__dat) {
