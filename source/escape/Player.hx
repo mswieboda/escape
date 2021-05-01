@@ -259,17 +259,26 @@ class Player extends FlxSprite {
 
   // TODO: see if i really *need* to return a Bool, as I don't currently use it in Level#updateCollisions
   public function onWaterTile(tile: FlxObject, feetTrigger: FlxObject): Bool {
-    inWater = true;
+    // check a fake/temp hitbox, with an offset, and width/height adjustments
+    var overlapFound = feetTrigger.x + feetTrigger.width > tile.x
+      && feetTrigger.x < tile.x + tile.width
+      && feetTrigger.y + feetTrigger.height > tile.y
+      && feetTrigger.y < tile.y + tile.height;
 
-    if (!alreadyHitWater) {
-      alreadyHitWater = true;
+    if (overlapFound) {
+      inWater = true;
 
-      FlxG.camera.shake(0.0015, 0.15);
-      // TODO: switch to splash sound
-      playSound("jump", 1);
+      if (!alreadyHitWater) {
+        alreadyHitWater = true;
+
+        // TODO: add a particle splash at the intersection point
+
+        playSound("splash", 0.3);
+        FlxG.camera.shake(0.0015, 0.15);
+      }
     }
 
-    return true;
+    return overlapFound;
   }
 
   function animateWalk() {
