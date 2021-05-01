@@ -105,19 +105,21 @@ class LevelEditor extends BaseLevel {
     }
 
     if (newTile != '') {
-      levelStrData[cursorRow][cursorCol] = newTile;
+      // TODO: needs to account for layers
+      levelStrData[cursorRow][cursorCol][0] = newTile;
 
       reloadTiles();
     }
   }
 
+  // TODO: needs to account for layers
   function addEmptiesToCursor() {
     if (cursorRow >= levelStrData.length) {
       for (r in levelStrData.length...(cursorRow + 1)) {
         levelStrData[r] = [];
 
         for (c in 0...levelStrData[0].length) {
-          levelStrData[r][c] = '0';
+          levelStrData[r][c][0] = '0';
           tiles.setTile(c, r, 0);
         }
       }
@@ -126,7 +128,7 @@ class LevelEditor extends BaseLevel {
     if (cursorCol >= levelStrData[0].length) {
       for (r in 0...levelStrData.length) {
         for (c in levelStrData[r].length...(cursorCol + 1)) {
-          levelStrData[r][c] = '0';
+          levelStrData[r][c][0] = '0';
           tiles.setTile(c, cursorRow, 0);
         }
       }
@@ -134,6 +136,7 @@ class LevelEditor extends BaseLevel {
   }
 
   public function save() {
+    // TODO: needs to account for layers
     var content = levelStrData.map(row -> row.join(',')).join("\n");
     File.saveContent(fileName, content);
   }

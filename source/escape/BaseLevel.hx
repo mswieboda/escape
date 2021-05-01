@@ -18,8 +18,10 @@ class BaseLevel extends FlxGroup {
   public var heightInTiles(get, never): Int;
 
   var tileGraphic: FlxTilemapGraphicAsset;
-  var levelStrData: Array<Array<String>>;
+  var foregroundTileGraphic: FlxTilemapGraphicAsset;
+  var levelStrData: Array<Array<Array<String>>>;
   var tiles: FlxTilemap;
+  var foregroundTiles: FlxTilemap;
   var behindLadderSprites: FlxGroup;
   var doors: FlxGroup;
   var ladders: FlxGroup;
@@ -32,14 +34,23 @@ class BaseLevel extends FlxGroup {
   public function new(
     player: Player,
     fileName: String,
-    tileGraphic: FlxTilemapGraphicAsset = AssetPaths.tiles__png
+    tileGraphic: FlxTilemapGraphicAsset = AssetPaths.tiles__png,
+    foregroundTileGraphic: FlxTilemapGraphicAsset = AssetPaths.foreground_tiles__png
   ) {
     super();
 
     this.fileName = fileName;
     this.tileGraphic = tileGraphic;
+    this.foregroundTileGraphic = foregroundTileGraphic;
+    this.playerPosition = new FlxPoint();
 
     tiles = new FlxTilemap();
+    tiles.useScaleHack = false;
+
+    foregroundTiles = new FlxTilemap();
+    foregroundTiles.useScaleHack = false;
+    foregroundTiles.alpha = 0.39;
+
     behindLadderSprites = new FlxGroup();
     doors = new FlxGroup();
     ladders = new FlxGroup();
@@ -55,6 +66,7 @@ class BaseLevel extends FlxGroup {
     add(doors);
     add(ladders);
 
+    foregrounds.add(foregroundTiles);
     foregrounds.add(spikes);
   }
 
@@ -65,13 +77,19 @@ class BaseLevel extends FlxGroup {
     // NOTE: overridden in child classes
   }
 
-  static function parseCSV(csv: String): Array<Array<String>> {
-    var data: Array<Array<String>> = [];
+  static function parseCSV(csv: String): Array<Array<Array<String>>> {
+    var data: Array<Array<Array<String>>> = [];
     var regex: EReg = new EReg("[ \t]*((\r\n)|\r|\n)[ \t]*", "g");
     var rows: Array<String> = regex.split(csv);
 
     for(rowString in rows) {
-      data.push(rowString.split(","));
+      var rowData: Array<Array<String>> = [];
+
+      for (cellString in rowString.split(",")) {
+        rowData.push(cellString.split("|"));
+      }
+
+      data.push(rowData);
     }
 
     return data;
@@ -89,43 +107,67 @@ class BaseLevel extends FlxGroup {
 
   function loadTiles() {
     var levelData: Array<Array<Int>> = [];
+    var foregroundData: Array<Array<Int>> = [];
     var ladderTileData: Array<LadderData> = [];
 
     for(row => rowStrData in levelStrData) {
       var rowData: Array<Int> = [];
+      var rowForegroundData: Array<Int> = [];
 
-      for (col => tile in rowStrData) {
-        var tileData = Std.parseInt(tile);
+      for (col => layers in rowStrData) {
+        var noForegroundAdded = true;
 
-        if (tileData == null) {
-          switch(tile.toUpperCase()) {
-            case Door.TILE:
-              tileData = tileForDoor(col, row);
-            case Ladder.TILE:
-              tileData = tileForLadder(col, row, ladderTileData);
-            case Spike.TILE:
-              tileData = tileForSpike(col, row);
-            case Lava.TILE:
-              tileData = tileForLava(col, row);
-            case Player.TILE:
-              tileData = tileForPlayer(col, row);
-            default:
-              trace('>>> ($col, $row): ??? $tile');
-              tileData = 0;
+        for (layer => tile in layers) {
+          var tileData = Std.parseInt(tile);
+
+          if (layer == 0) {
+            if (tileData == null) {
+              switch(tile.toUpperCase()) {
+                case Door.TILE:
+                  tileData = tileForDoor(col, row);
+                case Ladder.TILE:
+                  tileData = tileForLadder(col, row, ladderTileData);
+                case Spike.TILE:
+                  tileData = tileForSpike(col, row);
+                case Lava.TILE:
+                  tileData = tileForLava(col, row);
+                case Player.TILE:
+                  tileData = tileForPlayer(col, row);
+                default:
+                  trace('>>> ($col, $row): ??? $tile');
+                  tileData = 0;
+              }
+            }
+
+            rowData.push(tileData);
+          } else if (layer == 1) {
+            rowForegroundData.push(tileData);
+            noForegroundAdded = false;
           }
+
+          addTileTriggers(layer, col, row, tile);
         }
 
-        addTileTriggers(col, row, tile);
-
-        rowData.push(tileData);
+        if (noForegroundAdded) {
+          rowForegroundData.push(0);
+        }
       }
 
       levelData.push(rowData);
+      foregroundData.push(rowForegroundData);
     }
 
     tiles.loadMapFrom2DArray(
       levelData,
       tileGraphic,
+      TILE_WIDTH,
+      TILE_HEIGHT,
+      AUTO
+    );
+
+    foregroundTiles.loadMapFrom2DArray(
+      foregroundData,
+      foregroundTileGraphic,
       TILE_WIDTH,
       TILE_HEIGHT,
       AUTO
@@ -169,6 +211,8 @@ class BaseLevel extends FlxGroup {
     foregrounds.clear();
     tiles.destroy();
     tiles = new FlxTilemap();
+    foregroundTiles.destroy();
+    foregroundTiles = new FlxTilemap();
     doors.clear();
     ladders.clear();
     behindLadderSprites.clear();
@@ -292,19 +336,19 @@ class BaseLevel extends FlxGroup {
   }
 
   function tileForPlayer(col: Int, row: Int): Int {
-    playerPosition = new FlxPoint(col * TILE_WIDTH, row * TILE_HEIGHT - Player.HEIGHT / 2);
+    playerPosition.set(col * TILE_WIDTH, row * TILE_HEIGHT - Player.HEIGHT / 2);
 
     return 0;
   }
 
-  function addTileTriggers(col: Int, row: Int, tile: String) {
+  function addTileTriggers(layer: Int, col: Int, row: Int, tile: String) {
     // overridden in child classes
   }
 
-  function getTile(col: Int, row: Int): String {
+  function getTile(col: Int, row: Int, layer: Int = 0): String {
     var safe = row >= 0 && row < levelStrData.length && col >= 0 && col < levelStrData[row].length;
 
-    return safe ? levelStrData[row][col].toUpperCase() : '0';
+    return safe ? levelStrData[row][col][layer].toUpperCase() : '0';
   }
 }
 

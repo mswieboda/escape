@@ -54,6 +54,7 @@ class Level extends BaseLevel {
     add(rightWallJumpTriggers);
     add(floorTriggers);
 
+    foregrounds.add(foregroundTiles);
     foregrounds.add(spikes);
   }
 
@@ -85,7 +86,9 @@ class Level extends BaseLevel {
     return ladder;
   }
 
-  override function addTileTriggers(col: Int, row: Int, tile: String) {
+  override function addTileTriggers(layer: Int, col: Int, row: Int, tile: String) {
+    if (layer != 0) return;
+
     if (tile == '1') {
       var prevRowTile = getTile(col, row - 1);
       var nextRowTile = getTile(col, row + 1);
