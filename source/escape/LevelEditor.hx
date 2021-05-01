@@ -10,12 +10,14 @@ import sys.FileSystem;
 class LevelEditor extends BaseLevel {
   static inline var TILE_WIDTH = BaseLevel.TILE_WIDTH;
   static inline var TILE_HEIGHT = BaseLevel.TILE_HEIGHT;
-  static inline var CURSOR_THICKNESS = 5.0;
+  static inline var LAYERS = BaseLevel.LAYERS;
+  static inline var CURSOR_THICKNESS = 2.5;
   static inline var CURSOR_COLOR = 0xFF00FF00;
 
   var cursor: FlxSprite;
   var cursorCol: Int = 0;
   var cursorRow: Int = 0;
+  var cursorLayer: Int = 0;
 
   public function new(
     player: Player,
@@ -30,8 +32,8 @@ class LevelEditor extends BaseLevel {
   function makeCursor() {
     cursor = new FlxSprite();
 
-    var width = Std.int(TILE_WIDTH + CURSOR_THICKNESS);
-    var height = Std.int(TILE_HEIGHT + CURSOR_THICKNESS);
+    var width = Std.int(TILE_WIDTH + CURSOR_THICKNESS * 2);
+    var height = Std.int(TILE_HEIGHT + CURSOR_THICKNESS * 2);
 
     cursor.makeGraphic(width, height, FlxColor.TRANSPARENT);
 
@@ -39,11 +41,18 @@ class LevelEditor extends BaseLevel {
       cursor,
       CURSOR_THICKNESS / 2,
       CURSOR_THICKNESS / 2,
-      TILE_WIDTH,
-      TILE_HEIGHT,
+      TILE_WIDTH + CURSOR_THICKNESS,
+      TILE_HEIGHT + CURSOR_THICKNESS,
       FlxColor.TRANSPARENT,
       {thickness: CURSOR_THICKNESS, color: CURSOR_COLOR}
     );
+    cursor.setPosition(-CURSOR_THICKNESS, -CURSOR_THICKNESS);
+
+    setCursorColor();
+  }
+
+  function setCursorColor() {
+    cursor.color = FlxColor.fromHSL(0, 0, (cursorLayer + 1) / LAYERS);
   }
 
   override function addAll() {
@@ -64,40 +73,55 @@ class LevelEditor extends BaseLevel {
     var down = Actions.menu.down.triggered;
     var left = Actions.menu.left.triggered;
     var right = Actions.menu.right.triggered;
+    var layerForward = Actions.editor.layerForward.triggered;
+    var layerBack = Actions.editor.layerBack.triggered;
 
     if (up && down) up = down = false;
     if (left && right) left = right = false;
 
+    if (!up && !down && !left && !right && !layerForward && !layerBack) return;
+
     if (up || down) {
       cursor.y += up ? -TILE_HEIGHT : TILE_HEIGHT;
       cursorRow += up ? -1 : 1;
-    } else if (left || right) {
+    }
+
+    if (left || right) {
       cursor.x += left ? -TILE_WIDTH : TILE_WIDTH;
       cursorCol += left ? -1 : 1;
+    }
+
+    if (layerForward || layerBack) {
+      cursorLayer += layerForward ? 1 : -1;
+
+      if (cursorLayer < 0) cursorLayer = LAYERS - 1;
+      if (cursorLayer >= LAYERS) cursorLayer = 0;
+
+      setCursorColor();
     }
   }
 
   function checkForTileEdit() {
     var action = Actions.menu.action.triggered;
-    var cycleForward = Actions.editor.cycleForward.triggered;
-    var cycleBack = Actions.editor.cycleForward.triggered;
+    var tileForward = Actions.editor.tileForward.triggered;
+    var tileBack = Actions.editor.tileForward.triggered;
 
-    if (!action && !cycleForward && !cycleBack) return;
+    if (!action && !tileForward && !tileBack) return;
 
-    var tile = getTile(cursorCol, cursorRow);
+    var tile = getTile(cursorCol, cursorRow, cursorLayer);
     var newTile = '';
 
     addEmptiesToCursor();
 
     if (action && (tile == '0' || tile == '1')) {
       newTile = tile == '0' ? '1' : '0';
-    } else if (cycleForward || cycleBack) {
+    } else if (cursorLayer == 0 && (tileForward || tileBack)) {
       var allTiles = ['0', '1', Spike.TILE, Lava.TILE, Door.TILE, Ladder.TILE, Player.TILE];
       var index = allTiles.indexOf(tile.toUpperCase());
 
       if (index < 0) return;
 
-      if (cycleForward) {
+      if (tileForward) {
         newTile = allTiles[index + 1 < allTiles.length ? index + 1 : 0];
       } else {
         newTile = allTiles[index - 1 >= 0 ? index - 1 : allTiles.length - 1];
@@ -105,22 +129,21 @@ class LevelEditor extends BaseLevel {
     }
 
     if (newTile != '') {
-      // TODO: needs to account for layers
-      levelStrData[cursorRow][cursorCol][0] = newTile;
+      levelStrData[cursorRow][cursorCol][cursorLayer] = newTile;
 
       reloadTiles();
     }
   }
 
-  // TODO: needs to account for layers
   function addEmptiesToCursor() {
     if (cursorRow >= levelStrData.length) {
       for (r in levelStrData.length...(cursorRow + 1)) {
         levelStrData[r] = [];
 
         for (c in 0...levelStrData[0].length) {
-          levelStrData[r][c][0] = '0';
+          levelStrData[r][c] = [for (l in 0...LAYERS) '0'];
           tiles.setTile(c, r, 0);
+          foregroundTiles.setTile(c, r, 0);
         }
       }
     }
@@ -128,16 +151,16 @@ class LevelEditor extends BaseLevel {
     if (cursorCol >= levelStrData[0].length) {
       for (r in 0...levelStrData.length) {
         for (c in levelStrData[r].length...(cursorCol + 1)) {
-          levelStrData[r][c][0] = '0';
+          levelStrData[r][c] = [for (l in 0...LAYERS) '0'];
           tiles.setTile(c, cursorRow, 0);
+          foregroundTiles.setTile(c, cursorRow, 0);
         }
       }
     }
   }
 
   public function save() {
-    // TODO: needs to account for layers
-    var content = levelStrData.map(row -> row.join(',')).join("\n");
+    var content = levelStrData.map(row -> row.map(layers -> layers.join('|')).join(',')).join("\n");
     File.saveContent(fileName, content);
   }
 }

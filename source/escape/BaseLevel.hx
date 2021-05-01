@@ -13,6 +13,10 @@ import flixel.system.FlxAssets;
 import openfl.Assets;
 
 class BaseLevel extends FlxGroup {
+  public static inline var TILE_WIDTH = 32;
+  public static inline var TILE_HEIGHT = 32;
+  public static inline var LAYERS = 2;
+
   public var fileName: String;
   public var playerPosition: FlxPoint;
   public var widthInTiles(get, never): Int;
@@ -27,10 +31,8 @@ class BaseLevel extends FlxGroup {
   var doors: FlxGroup;
   var ladders: FlxGroup;
   var spikes: FlxGroup;
-  public var foregrounds: FlxGroup;
 
-  public static inline var TILE_WIDTH = 32;
-  public static inline var TILE_HEIGHT = 32;
+  public var foregrounds: FlxGroup;
 
   public function new(
     player: Player,
@@ -45,12 +47,7 @@ class BaseLevel extends FlxGroup {
     this.foregroundTileGraphic = foregroundTileGraphic;
     this.playerPosition = new FlxPoint();
 
-    tiles = new FlxTilemap();
-    tiles.useScaleHack = false;
-
-    foregroundTiles = new FlxTilemap();
-    foregroundTiles.useScaleHack = false;
-    foregroundTiles.alpha = 0.39;
+    initTiles();
 
     behindLadderSprites = new FlxGroup();
     doors = new FlxGroup();
@@ -59,6 +56,15 @@ class BaseLevel extends FlxGroup {
     foregrounds = new FlxGroup();
 
     loadTilesFromFile(fileName);
+  }
+
+  function initTiles() {
+    tiles = new FlxTilemap();
+    tiles.useScaleHack = false;
+
+    foregroundTiles = new FlxTilemap();
+    foregroundTiles.useScaleHack = false;
+    foregroundTiles.alpha = 0.39;
   }
 
   function addAll() {
@@ -209,15 +215,16 @@ class BaseLevel extends FlxGroup {
     remove(doors);
     remove(ladders);
 
-    foregrounds.clear();
     tiles.destroy();
-    tiles = new FlxTilemap();
     foregroundTiles.destroy();
-    foregroundTiles = new FlxTilemap();
+
+    initTiles();
+
     doors.clear();
     ladders.clear();
     behindLadderSprites.clear();
     spikes.clear();
+    foregrounds.clear();
 
     loadTiles();
   }
@@ -347,7 +354,12 @@ class BaseLevel extends FlxGroup {
   }
 
   function getTile(col: Int, row: Int, layer: Int = 0): String {
-    var safe = row >= 0 && row < levelStrData.length && col >= 0 && col < levelStrData[row].length;
+    var safe = row >= 0
+      && row < levelStrData.length
+      && col >= 0
+      && col < levelStrData[row].length
+      && layer >= 0
+      && layer < levelStrData[row][col].length;
 
     return safe ? levelStrData[row][col][layer].toUpperCase() : '0';
   }
