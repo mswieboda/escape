@@ -3,6 +3,7 @@ package escape;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.tile.FlxTile;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxTimer;
@@ -45,6 +46,8 @@ class Player extends FlxSprite {
   var firstFrame = true;
   var reachedMaxVelocityFromFloor = false;
   var triggeredMaxVelocityFromFloor = false;
+  var inWater = false;
+  var alreadyHitWater = false;
 
   public function new() {
     super();
@@ -152,6 +155,15 @@ class Player extends FlxSprite {
       }
     }
 
+    // lock feetTrigger to player position
+    feetTrigger.setPosition(x, y + height - FEET_TRIGGER_HEIGHT);
+  }
+
+  public function updateBeforeCollisionChecks() {
+    climbing = false;
+    canWallJump = false;
+    acceleration.y = GRAVITY;
+
     if (triggeredMaxVelocityFromFloor) {
       if (velocity.y <= 0) {
         triggeredMaxVelocityFromFloor = false;
@@ -163,14 +175,11 @@ class Player extends FlxSprite {
       }
     }
 
-    // lock feetTrigger to player position
-    feetTrigger.setPosition(x, y + height - FEET_TRIGGER_HEIGHT);
-  }
+    if (!inWater) {
+      alreadyHitWater = false;
+    }
 
-  public function updateBeforeCollisionChecks() {
-    climbing = false;
-    canWallJump = false;
-    acceleration.y = GRAVITY;
+    inWater = false;
 
     actionMessage.hide();
   }
@@ -246,6 +255,21 @@ class Player extends FlxSprite {
       FlxG.camera.shake(0.015, 0.3);
       playSound("jump", 0.5);
     }
+  }
+
+  // TODO: see if i really *need* to return a Bool, as I don't currently use it in Level#updateCollisions
+  public function onWaterTile(tile: FlxObject, feetTrigger: FlxObject): Bool {
+    inWater = true;
+
+    if (!alreadyHitWater) {
+      alreadyHitWater = true;
+
+      FlxG.camera.shake(0.0015, 0.15);
+      // TODO: switch to splash sound
+      playSound("jump", 1);
+    }
+
+    return true;
   }
 
   function animateWalk() {

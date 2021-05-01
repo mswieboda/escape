@@ -68,6 +68,7 @@ class Level extends BaseLevel {
     FlxG.overlap(leftWallJumpTriggers, player.feetTrigger, player.onLeftWallJumpTrigger);
     FlxG.overlap(rightWallJumpTriggers, player.feetTrigger, player.onRightWallJumpTrigger);
     FlxG.overlap(floorTriggers, player.feetTrigger, player.onFloorTrigger);
+    foregroundTiles.overlapsWithCallback(player.feetTrigger, player.onWaterTile);
   }
 
   override function addDoor(col: Int, row: Int): Door {

@@ -1,6 +1,7 @@
 package escape;
 
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxImageFrame;
 import flixel.group.FlxGroup;
