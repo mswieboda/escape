@@ -25,11 +25,22 @@ class Player extends FlxSprite {
   static inline var GRAVITY = 640;
   static inline var MAX_VELOCITY_X = 160;
   static inline var MAX_VELOCITY_Y = 640;
+  static inline var WATER_DRAG_X_RATIO = -0.75;
+  static inline var WATER_DRAG_Y_RATIO = -0.5;
+  static inline var WATER_GRAVITY_RATIO = -0.7;
 
   // animation
   static inline var WALK_FPS = 12;
   static inline var IDLE_FPS = 12;
   static inline var IDLE_TIME = 0.75;
+  static inline var WATER_FPS_RATIO = -0.75;
+  static var ANIMATION_FPS: Map<String, Int> = [
+    "walkRightFoot" => WALK_FPS,
+    "walkLeftFoot" => WALK_FPS,
+    "wallJump" => WALK_FPS,
+    "idleJump" => WALK_FPS,
+    "idle" => IDLE_FPS
+  ];
 
   // sound
   static inline var FLOOR_MAX_VELOCITY = 480;
@@ -53,11 +64,12 @@ class Player extends FlxSprite {
     super();
 
     loadGraphic(AssetPaths.player__png, true, WIDTH, HEIGHT);
-    animation.add("walkRightFoot", [1, 2, 1, 0], WALK_FPS, false);
-    animation.add("walkLeftFoot", [3, 4, 3, 0], WALK_FPS, false);
-    animation.add("wallJump", [5, 3, 4], WALK_FPS, false);
-    animation.add("idleJump", [1, 2], WALK_FPS, false);
-    animation.add("idle", [0, 6], IDLE_FPS, false);
+
+    animation.add("walkRightFoot", [1, 2, 1, 0], ANIMATION_FPS["walkRightFoot"], false);
+    animation.add("walkLeftFoot", [3, 4, 3, 0], ANIMATION_FPS["walkLeftFoot"], false);
+    animation.add("wallJump", [5, 3, 4], ANIMATION_FPS["wallJump"], false);
+    animation.add("idleJump", [1, 2], ANIMATION_FPS["idleJump"], false);
+    animation.add("idle", [0, 6], ANIMATION_FPS["idle"], false);
 
     setFacingFlip(FlxObject.LEFT, true, false);
     setFacingFlip(FlxObject.RIGHT, false, false);
@@ -100,21 +112,38 @@ class Player extends FlxSprite {
     if (left && right) left = right = false;
     if (down && up) up = down = false;
 
+    // for stuff like water, mud, quicksand etc to slow down
+    var movementXRatio = 1.0;
+    var movementYRatio = 1.0;
+    var gravityRatio = 1.0;
+    var fpsRatio = 1.0;
+
+    if (inWater) {
+      movementXRatio += WATER_DRAG_X_RATIO;
+      movementYRatio += WATER_DRAG_Y_RATIO;
+      gravityRatio += WATER_GRAVITY_RATIO;
+      fpsRatio += WATER_FPS_RATIO;
+    }
+
+    if (animation.curAnim != null && animation.name != null) {
+      animation.curAnim.frameRate = ANIMATION_FPS[animation.name] * fpsRatio;
+    }
+
     acceleration.x = 0;
-    acceleration.y = climbing ? 0 : GRAVITY;
+    acceleration.y = climbing ? 0 : GRAVITY * gravityRatio;
 
     if (climbing && (up || down)) {
-      velocity.y = down ? LADDER_SPEED : -LADDER_SPEED;
+      velocity.y = (down ? LADDER_SPEED : -LADDER_SPEED) * movementYRatio;
     }
 
     if (jump) {
       if (velocity.y == 0) {
-        velocity.y = -JUMP_SPEED;
+        velocity.y = -JUMP_SPEED * movementYRatio;
 
         animation.pause();
       } else if (canWallJump && (left || right)) {
-        velocity.x = left ? WALL_JUMP_X_SPEED : -WALL_JUMP_X_SPEED;
-        velocity.y = -WALL_JUMP_Y_SPEED;
+        velocity.x = (left ? WALL_JUMP_X_SPEED : -WALL_JUMP_X_SPEED) * movementXRatio;
+        velocity.y = -WALL_JUMP_Y_SPEED * movementYRatio;
 
         facing = left ? FlxObject.RIGHT : FlxObject.LEFT;
 
@@ -127,12 +156,12 @@ class Player extends FlxSprite {
     if (velocity.y == 0) {
       if (left) {
         facing = FlxObject.LEFT;
-        acceleration.x -= MOVEMENT_ACCELERATION;
+        acceleration.x -= MOVEMENT_ACCELERATION * movementXRatio;
 
         animateWalk();
       } else if (right) {
         facing = FlxObject.RIGHT;
-        acceleration.x += MOVEMENT_ACCELERATION;
+        acceleration.x += MOVEMENT_ACCELERATION * movementXRatio;
 
         animateWalk();
       } else {
@@ -149,7 +178,7 @@ class Player extends FlxSprite {
       }
     } else {
       if (left || right) {
-        acceleration.x += left ? -JUMP_X_MOVEMENT_ACCELERATION : JUMP_X_MOVEMENT_ACCELERATION;
+        acceleration.x += (left ? -JUMP_X_MOVEMENT_ACCELERATION : JUMP_X_MOVEMENT_ACCELERATION) * movementXRatio;
       } else if (animation.name != "idleJump") {
         animation.play("idleJump");
       }
@@ -162,7 +191,6 @@ class Player extends FlxSprite {
   public function updateBeforeCollisionChecks() {
     climbing = false;
     canWallJump = false;
-    acceleration.y = GRAVITY;
 
     if (triggeredMaxVelocityFromFloor) {
       if (velocity.y <= 0) {
