@@ -1,30 +1,37 @@
 package;
 
-import escape.PlayState;
 import escape.MenuState;
 
 import flixel.FlxG;
 import flixel.FlxGame;
-import flixel.FlxState;
 import openfl.display.Sprite;
 
 class Main extends Sprite {
+  public static var env: String;
+
   static inline var TEST = "TEST";
 
   public function new() {
+    getEnv();
+
     super();
-
-#if web
-    var env = "";
-#else
-    var env = Sys.getEnv("ENV");
-#end
-    env = env != null ? env.toUpperCase() : env;
-
-    var state: Class<FlxState> = MenuState;
 
     if (env == TEST) FlxG.debugger.drawDebug = true;
 
-    addChild(new FlxGame(0, 0, state, 1, 60, 60, true, false));
+    addChild(new FlxGame(0, 0, MenuState, 1, 60, 60, true, false));
+  }
+
+
+  public static function getEnv(): String {
+    if (env != null) return env;
+
+#if web
+    env = "";
+#else
+    env = Sys.getEnv("ENV");
+#end
+    env = env != null ? env.toUpperCase() : env;
+
+    return env;
   }
 }

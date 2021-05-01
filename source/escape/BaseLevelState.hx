@@ -53,7 +53,7 @@ class BaseLevelState extends FlxState {
     player.updateBeforeCollisionChecks();
     level.updateCollisions(player);
 
-    if (!player.alive && subState == null) openSubState(new GameOverMenu());
+    if (!player.alive && subState == null) openSubState(new GameOverMenu(this));
     if (Actions.game.menu.triggered) openSubState(new PauseMenu(this));
   }
 }

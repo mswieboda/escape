@@ -5,10 +5,6 @@ import flixel.FlxG;
 class PlayState extends LevelState {
   var topSpikes: TopSpikes;
 
-  public function new() {
-    super(AssetPaths.level__dat);
-  }
-
   override function addLevel() {
     super.addLevel();
 

@@ -5,7 +5,7 @@ import flixel.FlxG;
 class LevelState extends BaseLevelState {
   var levelFileName: String;
 
-  public function new(levelFileName: String = AssetPaths.level__dat) {
+  public function new(levelFileName) {
     this.levelFileName = levelFileName;
 
     var player = new Player();
