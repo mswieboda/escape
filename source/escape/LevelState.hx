@@ -14,6 +14,11 @@ class LevelState extends BaseLevelState {
     super(player, level);
   }
 
+  override function addLevel() {
+    super.addLevel();
+    Camera.setup(player);
+  }
+
   override public function restart() {
     FlxG.switchState(Type.createInstance(Type.getClass(this), [levelFileName]));
   }

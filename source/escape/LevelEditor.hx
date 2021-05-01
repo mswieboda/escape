@@ -24,7 +24,8 @@ class LevelEditor extends BaseLevel {
     Player.TILE
   ];
 
-  var cursor: FlxSprite;
+  public var cursor: FlxSprite;
+
   var cursorCol: Int = 0;
   var cursorRow: Int = 0;
   var cursorLayer: Int = 0;
@@ -94,11 +95,15 @@ class LevelEditor extends BaseLevel {
     if (up || down) {
       cursor.y += up ? -TILE_HEIGHT : TILE_HEIGHT;
       cursorRow += up ? -1 : 1;
+
+      if (cursorRow < 0) cursorRow = 0;
     }
 
     if (left || right) {
       cursor.x += left ? -TILE_WIDTH : TILE_WIDTH;
       cursorCol += left ? -1 : 1;
+
+      if (cursorCol < 0) cursorCol = 0;
     }
 
     if (layerForward || layerBack) {

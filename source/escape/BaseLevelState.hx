@@ -31,8 +31,6 @@ class BaseLevelState extends FlxState {
   }
 
   function addLevel() {
-    Camera.setup(player);
-
     var background = new Background(level.widthInTiles, level.heightInTiles);
 
     add(background);

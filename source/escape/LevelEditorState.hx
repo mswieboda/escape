@@ -21,6 +21,8 @@ class LevelEditorState extends BaseLevelState {
     add(level.foregrounds);
 
     player.setPosition(level.playerPosition.x, level.playerPosition.y);
+
+    Camera.setup(levelEditor.cursor);
   }
 
   override function update(elapsed: Float) {
