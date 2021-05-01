@@ -257,7 +257,6 @@ class Player extends FlxSprite {
     }
   }
 
-  // TODO: see if i really *need* to return a Bool, as I don't currently use it in Level#updateCollisions
   public function onWaterTile(tile: FlxObject, feetTrigger: FlxObject): Bool {
     // check a fake/temp hitbox, with an offset, and width/height adjustments
     var overlapFound = feetTrigger.x + feetTrigger.width > tile.x
