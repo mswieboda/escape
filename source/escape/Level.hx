@@ -19,6 +19,7 @@ class Level extends BaseLevel {
   var leftWallJumpTriggers: FlxGroup;
   var rightWallJumpTriggers: FlxGroup;
   var floorTriggers: FlxGroup;
+  var spikeFallingTriggers: FlxGroup;
 
   static inline var TILE_WIDTH = BaseLevel.TILE_WIDTH;
   static inline var TILE_HEIGHT = BaseLevel.TILE_HEIGHT;
@@ -35,6 +36,7 @@ class Level extends BaseLevel {
     leftWallJumpTriggers = new FlxGroup();
     rightWallJumpTriggers = new FlxGroup();
     floorTriggers = new FlxGroup();
+    spikeFallingTriggers = new FlxGroup();
 
     super(player, fileName, tileGraphic);
 
@@ -53,6 +55,7 @@ class Level extends BaseLevel {
     add(leftWallJumpTriggers);
     add(rightWallJumpTriggers);
     add(floorTriggers);
+    add(spikeFallingTriggers);
 
     foregrounds.add(foregroundTiles);
     foregrounds.add(spikes);
@@ -63,11 +66,12 @@ class Level extends BaseLevel {
 
     FlxG.collide(colliders, player);
     FlxG.collide(spikes, player, Player.onHitSpikes);
-    FlxG.overlap(doorTriggers, player, Player.onDoorTrigger, Door.onDoorTrigger);
+    FlxG.overlap(doorTriggers, player, Player.onDoorTrigger, Door.isLocked);
     FlxG.overlap(ladderTriggers, player, Player.onLadderTrigger);
     FlxG.overlap(leftWallJumpTriggers, player.feetTrigger, player.onLeftWallJumpTrigger);
     FlxG.overlap(rightWallJumpTriggers, player.feetTrigger, player.onRightWallJumpTrigger);
     FlxG.overlap(floorTriggers, player.feetTrigger, player.onFloorTrigger);
+    FlxG.overlap(spikeFallingTriggers, player.feetTrigger, SpikeFalling.onTrigger);
     foregroundTiles.overlapsWithCallback(player.feetTrigger, player.onWaterTile);
   }
 
@@ -85,6 +89,14 @@ class Level extends BaseLevel {
     ladderTriggers.add(ladder.trigger);
 
     return ladder;
+  }
+
+  override function addSpikeFalling(col: Int, row: Int): SpikeFalling {
+    var spike = super.addSpikeFalling(col, row);
+
+    spikeFallingTriggers.add(spike.trigger);
+
+    return spike;
   }
 
   override function addTileTriggers(layer: Int, col: Int, row: Int, tile: String) {

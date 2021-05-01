@@ -13,6 +13,16 @@ class LevelEditor extends BaseLevel {
   static inline var LAYERS = BaseLevel.LAYERS;
   static inline var CURSOR_THICKNESS = 2.5;
   static inline var CURSOR_COLOR = 0xFF00FF00;
+  static var TILES: Array<String> = [
+    '0',
+    '1',
+    Spike.TILE,
+    SpikeFalling.TILE,
+    Lava.TILE,
+    Door.TILE,
+    Ladder.TILE,
+    Player.TILE
+  ];
 
   var cursor: FlxSprite;
   var cursorCol: Int = 0;
@@ -116,15 +126,14 @@ class LevelEditor extends BaseLevel {
     if (action && (tile == '0' || tile == '1')) {
       newTile = tile == '0' ? '1' : '0';
     } else if (cursorLayer == 0 && (tileForward || tileBack)) {
-      var allTiles = ['0', '1', Spike.TILE, Lava.TILE, Door.TILE, Ladder.TILE, Player.TILE];
-      var index = allTiles.indexOf(tile.toUpperCase());
+      var index = TILES.indexOf(tile.toUpperCase());
 
       if (index < 0) return;
 
       if (tileForward) {
-        newTile = allTiles[index + 1 < allTiles.length ? index + 1 : 0];
+        newTile = TILES[index + 1 < TILES.length ? index + 1 : 0];
       } else {
-        newTile = allTiles[index - 1 >= 0 ? index - 1 : allTiles.length - 1];
+        newTile = TILES[index - 1 >= 0 ? index - 1 : TILES.length - 1];
       }
     }
 

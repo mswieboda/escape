@@ -30,10 +30,10 @@ class EditorPlayer extends Player {
   override public function hitSpike(spike: Spike) {
   }
 
-  override function doorTrigger(trigger: DoorTrigger) {
+  override function doorTrigger(door: Door) {
   }
 
-  override function ladderTrigger(trigger: LadderTrigger) {
+  override function ladderTrigger(ladder: Ladder) {
   }
 
   override public function onLeftWallJumpTrigger(trigger: Trigger, feetTrigger: Trigger) {

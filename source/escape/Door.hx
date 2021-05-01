@@ -31,7 +31,7 @@ class Door extends FlxGroup {
     sprite.animation.add("up", frames, FPS, false);
     sprite.animation.add("down", frameReversed, FPS, false);
 
-    trigger = new DoorTrigger(x - WIDTH / 2, y, WIDTH * 2, HEIGHT, this);
+    trigger = new Trigger(x - WIDTH / 2, y, WIDTH * 2, HEIGHT, this);
 
     this.locked = locked;
 
@@ -76,7 +76,7 @@ class Door extends FlxGroup {
     sprite.solid = false;
   }
 
-  public static function onDoorTrigger(trigger: DoorTrigger, player: Player): Bool {
-    return trigger.door.locked;
+  public static function isLocked(trigger: Trigger, player: Player): Bool {
+    return cast(trigger.parent, Door).locked;
   }
 }

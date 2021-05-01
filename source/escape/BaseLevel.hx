@@ -136,6 +136,8 @@ class BaseLevel extends FlxGroup {
                   tileData = tileForLadder(col, row, ladderTileData);
                 case Spike.TILE:
                   tileData = tileForSpike(col, row);
+                case SpikeFalling.TILE:
+                  tileData = tileForSpikeFalling(col, row);
                 case Lava.TILE:
                   tileData = tileForLava(col, row);
                 case Player.TILE:
@@ -323,6 +325,30 @@ class BaseLevel extends FlxGroup {
     spikes.add(spike);
 
     return 0;
+  }
+
+  function tileForSpikeFalling(col: Int, row: Int): Int {
+    addSpikeFalling(col, row);
+
+    return 0;
+  }
+
+  function addSpikeFalling(col: Int, row: Int): SpikeFalling {
+    var rowFound = row + 1;
+
+    for (r in (row + 1)...levelStrData.length) {
+      if (getTile(col, r) == '1') {
+        rowFound = r;
+        break;
+      }
+    }
+
+    var triggerHeight = (rowFound - row) * TILE_HEIGHT;
+    var spike = new SpikeFalling(col * TILE_WIDTH, row * TILE_HEIGHT, triggerHeight);
+
+    spikes.add(spike);
+
+    return spike;
   }
 
   function tileForLava(col: Int, row: Int): Int {

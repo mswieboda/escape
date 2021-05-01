@@ -15,6 +15,7 @@ class Player extends FlxSprite {
   public static inline var TILE = 'P';
 
   // movement
+  public static inline var GRAVITY = 640;
   static inline var MOVEMENT_ACCELERATION = 640;
   static inline var JUMP_X_MOVEMENT_ACCELERATION = 192;
   static inline var JUMP_SPEED = 256;
@@ -22,7 +23,6 @@ class Player extends FlxSprite {
   static inline var WALL_JUMP_Y_SPEED = 192;
   static inline var LADDER_SPEED = 160;
   static inline var DRAG: Int = 640;
-  static inline var GRAVITY = 640;
   static inline var MAX_VELOCITY_X = 160;
   static inline var MAX_VELOCITY_Y = 640;
   static inline var WATER_DRAG_X_RATIO = -0.75;
@@ -150,7 +150,7 @@ class Player extends FlxSprite {
         animation.resume();
       }
 
-      playSound("jump", 0.5);
+      Sound.play("jump", 0.5);
     }
 
     if (velocity.y == 0) {
@@ -173,7 +173,7 @@ class Player extends FlxSprite {
         } else if (animation.paused && idleTimer.finished) {
           animation.play("idle");
 
-          playSound("breath");
+          Sound.play("breath");
         }
       }
     } else {
@@ -223,26 +223,24 @@ class Player extends FlxSprite {
     kill();
   }
 
-  public static function onDoorTrigger(trigger: DoorTrigger, player: Player) {
-    player.doorTrigger(trigger);
+  public static function onDoorTrigger(trigger: Trigger, player: Player) {
+    player.doorTrigger(cast(trigger.parent, Door));
   }
 
-  function doorTrigger(trigger: DoorTrigger) {
+  function doorTrigger(door: Door) {
     // TODO: have actionMessage come from actions gamepad/keyboard etc somehow
     actionMessage.show("[action] to open");
-
-    var door = trigger.door;
 
     if (door.locked && Actions.game.action.triggered) {
       door.unlock();
     }
   }
 
-  public static function onLadderTrigger(trigger: LadderTrigger, player: Player) {
-    player.ladderTrigger(trigger);
+  public static function onLadderTrigger(trigger: Trigger, player: Player) {
+    player.ladderTrigger(cast(trigger.parent, Ladder));
   }
 
-  function ladderTrigger(trigger: LadderTrigger) {
+  function ladderTrigger(ladder: Ladder) {
     // TODO: have actionMessage come from actions gamepad/keyboard etc somehow
     actionMessage.show("[down/up] to descend/climb");
 
@@ -281,7 +279,7 @@ class Player extends FlxSprite {
       //       temporarily for a min, 3 mins, etc
 
       FlxG.camera.shake(0.015, 0.3);
-      playSound("jump", 0.5);
+      Sound.play("jump", 0.5);
     }
   }
 
@@ -300,7 +298,7 @@ class Player extends FlxSprite {
 
         // TODO: add a particle splash at the intersection point
 
-        playSound("splash", 0.3);
+        Sound.play("splash", 0.3);
         FlxG.camera.shake(0.0015, 0.15);
       }
     }
@@ -322,14 +320,5 @@ class Player extends FlxSprite {
     } else {
       animation.resume();
     }
-  }
-
-  function playSound(asset: String, volume: Float = 1) {
-    var ext = "ogg";
-#if web
-    ext = "mp3";
-#end
-
-    FlxG.sound.play('assets/sounds/${asset}.${ext}', volume);
   }
 }
