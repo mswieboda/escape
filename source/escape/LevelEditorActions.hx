@@ -33,7 +33,7 @@ class LevelEditorActions {
     // Add gamepad DPAD inputs
     tileForward.addGamepad(RIGHT_SHOULDER, JUST_PRESSED);
     tileBack.addGamepad(LEFT_SHOULDER, JUST_PRESSED);
-    layerForward.addGamepad(RIGHT_TRIGGER_BUTTON, JUST_PRESSED); // TODO: test, maybe just RIGHT_TRIGGER
-    layerBack.addGamepad(LEFT_TRIGGER_BUTTON, JUST_PRESSED); // TODO: test, maybe just LEFT_TRIGGER
+    layerForward.addGamepad(RIGHT_TRIGGER, JUST_PRESSED);
+    layerBack.addGamepad(LEFT_TRIGGER, JUST_PRESSED);
   }
 }

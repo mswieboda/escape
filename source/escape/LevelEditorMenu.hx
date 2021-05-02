@@ -8,7 +8,7 @@ class LevelEditorMenu extends PlayMenu {
   public function new(levelEditor: LevelEditor, load: () -> Void) {
     var title = "Level Editor";
     var itemData = [
-      { name: "edit", action: name -> close() },
+      { name: "edit", action: name -> edit() },
       { name: "test", action: name -> test(levelEditor) },
       { name: "save", action: name -> save(levelEditor) },
       { name: "load", action: name -> this.load(load) },
@@ -16,6 +16,12 @@ class LevelEditorMenu extends PlayMenu {
     ];
 
     super(title, itemData);
+  }
+
+  function edit() {
+    if (firstFrame) return;
+
+    close();
   }
 
   function test(levelEditor: LevelEditor) {

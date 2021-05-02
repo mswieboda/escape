@@ -11,6 +11,7 @@ class MenuItems extends FlxTypedGroup<MenuItem> {
   static inline var PADDING = 16;
 
   var selectedIndex = 0;
+  var firstFrame = true;
 
   public function new(y: Float, itemData: Array<ItemData>) {
     super();
@@ -30,6 +31,13 @@ class MenuItems extends FlxTypedGroup<MenuItem> {
   }
 
   override function update(elapsed: Float) {
+    super.update(elapsed);
+
+    if (firstFrame) {
+      firstFrame = false;
+      return;
+    }
+
     if (Actions.menu.down.triggered) {
       members[selectedIndex].setSelected(false);
 
@@ -43,11 +51,11 @@ class MenuItems extends FlxTypedGroup<MenuItem> {
 
       members[selectedIndex].setSelected(true);
     }
-
-    super.update(elapsed);
   }
 
-  function actionCondition(name: String) {
+  function actionCondition(name: String): Bool {
+    if (firstFrame) return false;
+
     return Actions.menu.action.triggered;
   }
 }

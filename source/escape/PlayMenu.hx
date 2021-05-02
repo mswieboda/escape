@@ -12,6 +12,7 @@ class PlayMenu extends FlxSubState {
   var itemData: Array<MenuItems.ItemData>;
   var parentPersistentUpdate: Bool;
   var parentPersistentDraw: Bool;
+  var firstFrame = true;
 
   public function new(
     title: String,
@@ -48,5 +49,11 @@ class PlayMenu extends FlxSubState {
     }
 
     Actions.addInputs();
+  }
+
+  override function update(elapsed: Float) {
+    super.update(elapsed);
+
+    if (firstFrame) firstFrame = false;
   }
 }
