@@ -9,10 +9,12 @@ import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxTimer;
 
 class Player extends FlxSprite {
+  public static inline var TILE = 'P';
+
   // size, position
   public static inline var WIDTH = 24;
   public static inline var HEIGHT = 48;
-  public static inline var TILE = 'P';
+  static inline var DYING_WIDTH = HEIGHT;
 
   // movement
   public static inline var GRAVITY = 640;
@@ -32,15 +34,20 @@ class Player extends FlxSprite {
   // animation
   static inline var WALK_FPS = 12;
   static inline var IDLE_FPS = 12;
-  static inline var IDLE_TIME = 0.75;
+  static inline var DYING_FPS = 24;
   static inline var WATER_FPS_RATIO = -0.75;
   static var ANIMATION_FPS: Map<String, Int> = [
     "walkRightFoot" => WALK_FPS,
     "walkLeftFoot" => WALK_FPS,
     "wallJump" => WALK_FPS,
     "idleJump" => WALK_FPS,
-    "idle" => IDLE_FPS
+    "idle" => IDLE_FPS,
+    "dying" => DYING_FPS,
   ];
+
+  // timers
+  static inline var IDLE_TIME = 0.75;
+  static inline var IDLE_DEAD_TIME = 1.337;
 
   // sound
   static inline var FLOOR_MAX_VELOCITY = 480;
@@ -54,11 +61,13 @@ class Player extends FlxSprite {
   var walkRightFoot = false;
   var canWallJump = false;
   var idleTimer: FlxTimer;
+  var deathTimer: FlxTimer;
   var firstFrame = true;
   var reachedMaxVelocityFromFloor = false;
   var triggeredMaxVelocityFromFloor = false;
   var inWater = false;
   var alreadyHitWater = false;
+  var dying = false;
 
   public function new() {
     super();
@@ -88,6 +97,7 @@ class Player extends FlxSprite {
     );
 
     idleTimer = new FlxTimer();
+    deathTimer = new FlxTimer();
     idleTimer.start(IDLE_TIME);
   }
 
@@ -102,6 +112,8 @@ class Player extends FlxSprite {
       firstFrame = false;
       return;
     }
+
+    if (dying) return;
 
     var left = Actions.game.left.triggered;
     var right = Actions.game.right.triggered;
@@ -217,9 +229,25 @@ class Player extends FlxSprite {
   }
 
   public function hitSpike(spike: Spike) {
-    // TODO: bloody spikes animation
-    // set this.killing = true
-    // when animation done, kill!
+    die();
+  }
+
+  function die() {
+    if (dying) return;
+
+    dying = true;
+
+    loadGraphic(AssetPaths.player_dying__png, true, DYING_WIDTH, HEIGHT);
+
+    animation.add("dying", [for (i in 0...8) i], ANIMATION_FPS["dying"], false);
+
+    x -= (DYING_WIDTH - WIDTH) / 2;
+
+    animation.play("dying");
+    deathTimer.start(IDLE_DEAD_TIME, dead);
+  }
+
+  function dead(timer: FlxTimer) {
     kill();
   }
 
