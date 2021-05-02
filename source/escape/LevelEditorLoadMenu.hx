@@ -3,7 +3,10 @@ package escape;
 import flixel.FlxG;
 import flixel.FlxSubState;
 import flixel.text.FlxText;
+
+#if (!web)
 import sys.FileSystem;
+#end
 
 using flixel.util.FlxArrayUtil;
 using StringTools;
@@ -27,7 +30,7 @@ class LevelEditorLoadMenu extends PlayMenu {
   function getLevels(directory: String = "assets/levels"): Array<LevelData> {
     var filterExtensions: Array<String> = ["dat"];
     var levels: Array<LevelData> = [];
-
+#if (!web)
     if (!directory.endsWith("/"))
       directory += "/";
 
@@ -51,7 +54,7 @@ class LevelEditorLoadMenu extends PlayMenu {
         levels.push(levelData);
       }
     }
-
+#end
     return levels;
   }
 

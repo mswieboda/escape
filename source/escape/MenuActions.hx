@@ -51,7 +51,6 @@ class MenuActions {
     action.addGamepad(A, JUST_PRESSED);
     action.addGamepad(START, JUST_PRESSED);
     cancel.addGamepad(B, JUST_PRESSED);
-    cancel.addGamepad(BACK, JUST_PRESSED);
 
     // Add gamepad analog stick (as simulated DPAD) inputs
     up.addGamepad(LEFT_STICK_DIGITAL_UP, JUST_PRESSED);

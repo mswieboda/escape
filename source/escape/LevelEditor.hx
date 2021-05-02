@@ -4,8 +4,9 @@ import flixel.system.FlxAssets;
 import flixel.FlxSprite;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxColor;
+#if (!web)
 import sys.io.File;
-import sys.FileSystem;
+#end
 
 class LevelEditor extends BaseLevel {
   static inline var TILE_WIDTH = BaseLevel.TILE_WIDTH;
@@ -119,7 +120,7 @@ class LevelEditor extends BaseLevel {
   function checkForTileEdit() {
     var action = Actions.menu.action.triggered;
     var tileForward = Actions.editor.tileForward.triggered;
-    var tileBack = Actions.editor.tileForward.triggered;
+    var tileBack = Actions.editor.tileBack.triggered;
 
     if (!action && !tileForward && !tileBack) return;
 
@@ -175,6 +176,8 @@ class LevelEditor extends BaseLevel {
 
   public function save() {
     var content = levelStrData.map(row -> row.map(layers -> layers.join('|')).join(',')).join("\n");
+#if (!web)
     File.saveContent(fileName, content);
+#end
   }
 }
